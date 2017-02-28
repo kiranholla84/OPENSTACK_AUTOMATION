@@ -4,9 +4,9 @@ from json import loads
 from pprint import pprint as pp
 import ast
 import time
+from sys import argv
 
-volume = 'myvol_script_4gh'
-server = 'myserver_script_4gh'
+volume,server = argv
 o_chdir = os.chdir("/opt/stack/devstack")
 size_vol = "100"
 type_vol = 'VMAX_OPTIMIZED'
