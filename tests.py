@@ -10,10 +10,11 @@ import sys
 import re
 
 # This will be the inputs & variable initilizations
-volume_name = sys.argv[1]
-server_name = sys.argv[2]
-volume_name_bootable = volume_name + "_" + "bootable"
-print "volume & server" , volume_name , server_name
+volume_name = 'qe_volume' + "_" + str(time.time())
+server_name = 'qe_server' + "_" + str(time.time())
+server_from_bootable_volume = 'qe_server_From_bootable_volume'+ "_" + str(time.time())
+volume_name_bootable = 'qe_volume_bootable' + "_" + str(time.time())
+
 o_chdir = os.chdir("/opt/stack/devstack")
 size_vol = 5
 type_vol = 'VMAX_SILVER'
@@ -25,7 +26,7 @@ volume_available_string = 'available'
 server_available_string = 'ACTIVE'
 bootable_string = 'true'
 new_volume_size = size_vol +  10
-server_from_bootable_volume = 'server_from_bootable_volume'
+
 
 # function to get the latest status of the volume
 def latest_volume_status(volume_name):
@@ -57,7 +58,7 @@ def check_pattern_match(pattern,input_string):
         print "\nPATTERN MATCHED!!!"
         return 1
 #
-# print "\n\n================CREATING NON-BOOTABLE VOLUME ================\n\n"
+# print "\n================CREATING NON-BOOTABLE VOLUME ================\n"
 # list_checkOutput = ['openstack' ,'volume' ,'create' , '--size', str(size_vol) , '--type' , type_vol , volume_name, '-f','json']
 # op = subprocess.check_output(list_checkOutput)
 # op = loads(op)
@@ -72,7 +73,7 @@ def check_pattern_match(pattern,input_string):
 #     op = latest_volume_status(volume_name)
 #
 #
-# print "\n\n================CHECKING FOR THE CREATION OF NON-BOOTABLE VOLUME================\n\n"
+# print "\n================CHECKING FOR THE CREATION OF NON-BOOTABLE VOLUME================\n"
 # o_chdir = os.chdir("/opt/stack/devstack")
 #
 # inputs = [volume_name,size_vol,type_vol,no_attach,replication_status,volume_available_string]
@@ -85,7 +86,7 @@ def check_pattern_match(pattern,input_string):
 #     print "\nVOLUME CREATED SUCCESSFULLY\n"
 #
 # #
-# print "\n\n================DELETION OF NON-BOOTABLE VOLUME================\n\n"
+# print "\n================DELETION OF NON-BOOTABLE VOLUME================\n"
 # o_chdir = os.chdir("/opt/stack/devstack")
 # list_checkOutput_delete = ['openstack' ,'volume' ,'delete' ,  volume_name]
 # op = subprocess.check_output(list_checkOutput_delete)
@@ -102,14 +103,14 @@ def check_pattern_match(pattern,input_string):
 #             break
 #             print "CURRENT STATUS OF VOLUME IS" , op , "HENCE CONTINUING"
 #
-# print "\n\n================CREATION OF EMPTY INSTANCE================\n\n"
+# print "\n================CREATION OF EMPTY INSTANCE================\n"
 # instanceCreation_subprocess_ob = ['openstack' ,'server' ,'create' , '--image', image , '--flavor' , flavor , server_name, '-f','json']
 # instanceCreated_ob = subprocess.check_output(instanceCreation_subprocess_ob)
 # op = loads(instanceCreated_ob)
 #
 # server_id = op['id']
 #
-# print "\n\n================CHECKING FOR THE CREATION OF INSTANCE================\n\n"
+# print "\n================CHECKING FOR THE CREATION OF INSTANCE================\n"
 # o_chdir = os.chdir("/opt/stack/devstack")
 #
 # # non-bootable non-attached volume show
@@ -132,7 +133,7 @@ def check_pattern_match(pattern,input_string):
 # if values == inputs :
 #     print "\nINSTANCE CREATED SUCCESSFULLY\n"
 #
-# print "\n\n================DELETION OF INSTANCE================\n\n"
+# print "\n================DELETION OF INSTANCE================\n"
 # o_chdir = os.chdir("/opt/stack/devstack")
 # instance_delete = ['openstack' ,'server' ,'delete', server_name]
 # op = subprocess.check_output(instance_delete)
@@ -150,7 +151,7 @@ def check_pattern_match(pattern,input_string):
 #             break
 #         print "CURRENT STATUS OF SERVER IS" , op , "HENCE CONTINUING"
 
-# print "\n\n================VOLUME ATTACH================\n\n"
+# print "\n================VOLUME ATTACH================\n"
 # volume addition to server or volume attach
 # list_check_output = ['openstack' , 'server' , 'add' , 'volume' , server_name, volume_name]
 # op_attach_vol = subprocess.check_output(list_check_output)
@@ -176,7 +177,7 @@ def check_pattern_match(pattern,input_string):
 # if values == inputs :
 #     print "\nVOLUME ATTACHED SUCCESSFULLY\n"
 #
-# print "\n\n================VOLUME DETACH================\n\n"
+# print "\n================VOLUME DETACH================\n"
 # # volume addition to server or volume attach
 # list_check_output = ['openstack' , 'server' , 'remove' , 'volume' , server_name, volume_name]
 # op_attach_vol = subprocess.check_output(list_check_output)
@@ -186,7 +187,7 @@ def check_pattern_match(pattern,input_string):
 # op = yaml.load(op)
 #
 # print "op is" , op
-# print "\n\n\n"
+# print "\n\n"
 # try:
 #     attachment_details_server_id = op['attachments'][0]['server_id']
 #     attachment_details_attachment_id = op['attachments'][0]['attachment_id']
@@ -199,7 +200,7 @@ def check_pattern_match(pattern,input_string):
 # print "attachment details %s :: %s ::  %s :: %s"  %(attachment_details_server_id, attachment_details_attachment_id,attachment_details_volume_id,attachment_details_device)
 
 
-# # print "\n\n================VOLUME EXTEND================\n\n"
+# # print "\n================VOLUME EXTEND================\n"
 # print "New size is" , new_volume_size
 # list_check_output = ['openstack' , 'volume' , 'set' , '--size' , str(new_volume_size), volume_name]
 # op_extend_vol = subprocess.check_output(list_check_output)
@@ -210,18 +211,18 @@ def check_pattern_match(pattern,input_string):
 #
 # print "NEW SIZE FROM OP" , op['size']
 #
-# # print "\n\n================VOLUME CLONING================\n\n"
+# # print "\n================VOLUME CLONING================\n"
 # list_check_output = ['openstack' , 'volume' , 'create' , '--source' , volume_name, cloned_volume_name]
 # op_extend_vol = subprocess.check_output(list_check_output)
 #
 # # Check size, new volume name, old volume name, bootable,status,replication_status
 #
-# # print "\n\n================VOLUME SNAPSHOT================\n\n"
+# # print "\n================VOLUME SNAPSHOT================\n"
 # snapshot_volume_name = "snapshot" + "_" + volume_name
 # list_check_output = ['openstack' , 'volume' ,'snapshot' ,'create' , "--volume" ,volume_name , snapshot_volume_name]
 # op_snaps_vol_create = subprocess.check_output(list_check_output)
 
-# # print "\n\n================VOLUME SNAPSHOT CREATION CHECK================\n\n"
+# # print "\n================VOLUME SNAPSHOT CREATION CHECK================\n"
 # #openstack volume snapshot show snap_qe_vol_silver_99 -f  json
 # list_check_output = ['openstack' , 'volume' ,'snapshot' ,'show' , snapshot_volume_name , '-f', 'json']
 # op_snaps_vol_show = subprocess.check_output(list_check_output)
@@ -235,7 +236,7 @@ def check_pattern_match(pattern,input_string):
 # print "From output ", op_snaps_vol_show['name'] , op_snaps_vol_show['volume_id'] , op_snaps_vol_show['status']
 #
 #
-# # print "\n\n================VOLUME SNAPSHOT DELETION================\n\n"
+# # print "\n================VOLUME SNAPSHOT DELETION================\n"
 # list_check_output = ['openstack' , 'volume' ,'delete' ,snapshot_volume_name]
 #
 # op_snaps_vol_show = yaml.load(op_snaps_vol_show)
@@ -244,10 +245,10 @@ def check_pattern_match(pattern,input_string):
 
 # # Check snapshot name , volume id from which the snapshot was taken, status, size, os-extended-snapshot-attributes
 #
-# # print "\n\n================VOLUME CLONING FROM SNAPSHOT================\n\n"
+# # print "\n================VOLUME CLONING FROM SNAPSHOT================\n"
 # list_check_output = ['openstack' , 'volume' , 'create' , '--source' , snapshot_volume_name, cloned_volume_name]
 
-print "\n\n================CREATING VOLUME FROM IMAGE================\n\n"
+print "\nCREATING A BOOTABLE VOLUME" ,volume_name_bootable,"...\n"
 ##openstack volume create --image cirros-0.3.4-x86_64-uec --type VMAX_SILVER --size 20 qe_neither_bootable_1
 
 # Get the images dynamically
@@ -256,39 +257,36 @@ op_image_list = subprocess.check_output(list_check_output)
 
 ##** This conversion to yaml is important as it gives the type of theouput in list format. From json output, by default, op_image_list will ocme out as a string :(
 op_image_list = yaml.load(op_image_list)
-print "\nIMAGE TO BE USED IS" , op_image_list[0]['Name']
+print "\nIMAGE WHICH WILL BE USED FOR BOOTABLE VOLUME CREATION IS" , op_image_list[0]['Name'],"...\n"
 
 list_check_output = ['openstack' , 'volume' , 'create' , '--image' , op_image_list[0]['Name'] , '--type' , type_vol , '--size', str(size_vol) , volume_name_bootable]
 op_bootable_volume_create = subprocess.check_output(list_check_output)
 op_bootable_volume_create = yaml.load(op_bootable_volume_create)
-
-print "\n\n================CHECKING FOR THE CREATION OF BOOTABLE VOLUME================\n\n"
+#
+print "\nCHECKING FOR THE CREATION OF BOOTABLE VOLUME", volume_name_bootable,"...\n"
 o_chdir = os.chdir("/opt/stack/devstack")
 op_bootable_volume_show = latest_volume_status(volume_name_bootable)
 # op_bootable_volume_show = yaml.load(op_bootable_volume_show)
 
-print "\n\nop_bootable_volume_show is" , op_bootable_volume_show
-
 # bootable non-attached volume show
 while (op_bootable_volume_show['status'] != 'available'):
     if (op_bootable_volume_show['status'].lower == 'error'):
-        print "\nFAILURE IN CREATING VOLUME %s. EXITING" % (op_bootable_volume_show['name'])
+        print "\nFAILURE IN CREATING VOLUME %s. EXITING\n" % (op_bootable_volume_show['name'])
         break
-    print "\nWAITING FOR STATUS OF THE VOLUME %s TO BE AVAILABLE. CURRENTLY VOLUME STATE IS IN %s\n" % (op_bootable_volume_show['name'],op_bootable_volume_show['status'])
+    print "WAITING FOR STATUS OF THE VOLUME %s TO BE AVAILABLE. CURRENTLY VOLUME STATE IS IN %s ..." % (op_bootable_volume_show['name'],op_bootable_volume_show['status'])
     time.sleep(10)
     op_bootable_volume_show = latest_volume_status(volume_name_bootable)
 
 inputs = [volume_name_bootable,size_vol,type_vol,no_attach,replication_status,volume_available_string, bootable_string]
-print "\nINPUTS TO CREATE VOLUME" , inputs
+# print "\nINPUTS TO CREATE VOLUME" , inputs
 
 values = [op_bootable_volume_show['name'],op_bootable_volume_show['size'],op_bootable_volume_show['type'],op_bootable_volume_show['attachments'],op_bootable_volume_show['replication_status'],op_bootable_volume_show['status'],op_bootable_volume_show['bootable']]
-print "\nVALUES FROM THE CREATED VOLUME", values
+# print "\nVALUES FROM THE CREATED VOLUME", values
 
 if values == inputs :
-    print "\nBOOTABLE VOLUME CREATED SUCCESSFULLY\n"
+    print "\nBOOTABLE VOLUME %s CREATED SUCCESSFULLY!!!...\n" % (volume_name_bootable)
 
-print "\n\n================CREATING AN INSTANCE FROM BOOTABLE VOLUME================\n\n"
-# openstack server create --volume qe_vol_silver_19991_bootable --flavor m1.tiny inst_vol
+print "\nCREATING AN INSTANCE FROM BOOTABLE VOLUME...\n"
 list_check_output = ['openstack' , 'server' , 'create' , '--volume' , volume_name_bootable , '--flavor' , "m1.tiny", server_from_bootable_volume]
 op_server_create = subprocess.check_output(list_check_output)
 
@@ -296,14 +294,21 @@ list_check_output = ['openstack' , 'server' , 'show',  server_from_bootable_volu
 op_server_show = subprocess.check_output(list_check_output)
 op_server_show = yaml.load(op_server_show)
 
-print "\n\nop_server_show is" , op_server_show
-print "\n\nTYPE OF op_server_show" , type(op_server_show)
+inputs = [server_from_bootable_volume]
+values = [op_server_show['name']]
+volume_attached_in_server = re.search(op_bootable_volume_show['id'], op_server_show['volumes_attached'] , re.I)
 
-print "EXTRACTABLE STUFF" , op_server_show['id'], op_server_show['name'], op_server_show['status'] , op_server_show['volumes_attached']
+if values == inputs and volume_attached_in_server:
+    print "\nSERVER FROM BOOTABLE VOLUME,  %s ,  CREATED SUCCESSFULLY!!!...\n" % (server_from_bootable_volume)
+else:
+    print "inputs", inputs
+    print "values", values
+    print "volume_attached_in_server", volume_attached_in_server
+
 
 #
 #
-# print "\n\n================DELETION OF BOOTABLE VOLUME================\n\n"
+# print "\n================DELETION OF BOOTABLE VOLUME================\n"
 # o_chdir = os.chdir("/opt/stack/devstack")
 # list_checkOutput_delete = ['openstack' ,'volume' ,'delete' ,  volume_name_bootable]
 # op = subprocess.check_output(list_checkOutput_delete)
