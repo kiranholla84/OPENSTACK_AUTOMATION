@@ -248,7 +248,7 @@ def check_pattern_match(pattern,input_string):
 # # print "\n================VOLUME CLONING FROM SNAPSHOT================\n"
 # list_check_output = ['openstack' , 'volume' , 'create' , '--source' , snapshot_volume_name, cloned_volume_name]
 
-print "\nCREATING A BOOTABLE VOLUME" ,volume_name_bootable,"...\n"
+print "\n==>CREATING A BOOTABLE VOLUME" ,volume_name_bootable,"...\n"
 ##openstack volume create --image cirros-0.3.4-x86_64-uec --type VMAX_SILVER --size 20 qe_neither_bootable_1
 
 # Get the images dynamically
@@ -257,13 +257,13 @@ op_image_list = subprocess.check_output(list_check_output)
 
 ##** This conversion to yaml is important as it gives the type of theouput in list format. From json output, by default, op_image_list will ocme out as a string :(
 op_image_list = yaml.load(op_image_list)
-print "\nIMAGE WHICH WILL BE USED FOR BOOTABLE VOLUME CREATION IS" , op_image_list[0]['Name'],"...\n"
+print "\n==>IMAGE WHICH WILL BE USED FOR BOOTABLE VOLUME CREATION IS" , op_image_list[0]['Name'],"...\n"
 
 list_check_output = ['openstack' , 'volume' , 'create' , '--image' , op_image_list[0]['Name'] , '--type' , type_vol , '--size', str(size_vol) , volume_name_bootable]
 op_bootable_volume_create = subprocess.check_output(list_check_output)
 op_bootable_volume_create = yaml.load(op_bootable_volume_create)
 #
-print "\nCHECKING FOR THE CREATION OF BOOTABLE VOLUME", volume_name_bootable,"...\n"
+print "\n==>CHECKING FOR THE CREATION OF BOOTABLE VOLUME", volume_name_bootable,"...\n"
 o_chdir = os.chdir("/opt/stack/devstack")
 op_bootable_volume_show = latest_volume_status(volume_name_bootable)
 # op_bootable_volume_show = yaml.load(op_bootable_volume_show)
@@ -271,9 +271,9 @@ op_bootable_volume_show = latest_volume_status(volume_name_bootable)
 # bootable non-attached volume show
 while (op_bootable_volume_show['status'] != 'available'):
     if (op_bootable_volume_show['status'].lower == 'error'):
-        print "\nFAILURE IN CREATING VOLUME %s. EXITING\n" % (op_bootable_volume_show['name'])
+        print "\n==>FAILURE IN CREATING VOLUME %s. EXITING\n" % (op_bootable_volume_show['name'])
         break
-    print "WAITING FOR STATUS OF THE VOLUME %s TO BE AVAILABLE. CURRENTLY VOLUME STATE IS IN %s ..." % (op_bootable_volume_show['name'],op_bootable_volume_show['status'])
+    print "==>WAITING FOR STATUS OF THE VOLUME %s TO BE AVAILABLE. CURRENTLY VOLUME STATE IS IN %s ..." % (op_bootable_volume_show['name'],op_bootable_volume_show['status'])
     time.sleep(10)
     op_bootable_volume_show = latest_volume_status(volume_name_bootable)
 
@@ -284,26 +284,26 @@ values = [op_bootable_volume_show['name'],op_bootable_volume_show['size'],op_boo
 # print "\nVALUES FROM THE CREATED VOLUME", values
 
 if values == inputs :
-    print "\nBOOTABLE VOLUME %s CREATED SUCCESSFULLY!!!...\n" % (volume_name_bootable)
-
-print "\nCREATING AN INSTANCE FROM BOOTABLE VOLUME...\n"
-list_check_output = ['openstack' , 'server' , 'create' , '--volume' , volume_name_bootable , '--flavor' , "m1.tiny", server_from_bootable_volume]
-op_server_create = subprocess.check_output(list_check_output)
-
-list_check_output = ['openstack' , 'server' , 'show',  server_from_bootable_volume, "-f", "json"]
-op_server_show = subprocess.check_output(list_check_output)
-op_server_show = yaml.load(op_server_show)
-
-inputs = [server_from_bootable_volume]
-values = [op_server_show['name']]
-volume_attached_in_server = re.search(op_bootable_volume_show['id'], op_server_show['volumes_attached'] , re.I)
-
-if values == inputs and volume_attached_in_server:
-    print "\nSERVER FROM BOOTABLE VOLUME,  %s ,  CREATED SUCCESSFULLY!!!...\n" % (server_from_bootable_volume)
-else:
-    print "inputs", inputs
-    print "values", values
-    print "volume_attached_in_server", volume_attached_in_server
+    print "\n==>BOOTABLE VOLUME %s CREATED SUCCESSFULLY!!!...\n" % (volume_name_bootable)
+#
+# print "\n==>CREATING AN INSTANCE FROM BOOTABLE VOLUME...\n"
+# list_check_output = ['openstack' , 'server' , 'create' , '--volume' , volume_name_bootable , '--flavor' , "m1.tiny", server_from_bootable_volume]
+# op_server_create = subprocess.check_output(list_check_output)
+#
+# list_check_output = ['openstack' , 'server' , 'show',  server_from_bootable_volume, "-f", "json"]
+# op_server_show = subprocess.check_output(list_check_output)
+# op_server_show = yaml.load(op_server_show)
+#
+# inputs = [server_from_bootable_volume]
+# values = [op_server_show['name']]
+# volume_attached_in_server = re.search(op_bootable_volume_show['id'], op_server_show['volumes_attached'] , re.I)
+#
+# if values == inputs and volume_attached_in_server:
+#     print "\n==>SERVER FROM BOOTABLE VOLUME,  %s ,  CREATED SUCCESSFULLY!!!...\n" % (server_from_bootable_volume)
+# else:
+#     print "inputs", inputs
+#     print "values", values
+#     print "volume_attached_in_server", volume_attached_in_server
 
 
 #
