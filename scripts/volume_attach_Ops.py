@@ -8,6 +8,9 @@ import time
 import sys
 import re
 
-from ..lib import os_objects
+sys.path.insert(0,"../lib")
+from os_objects import *
+
+non_bootable_volume_list = volumes_create("nonBootable", "nonReplicated", 5)
 
 
