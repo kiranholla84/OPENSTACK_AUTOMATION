@@ -11,9 +11,8 @@ import re
 class VolumeOperations(object):
     def __init__(self, **kwargs):
         for key,value in kwargs.iteritems():
-            print "%s = %s" % (key,value)
+            print "SOMETHING HERE ? %s = %s" % (key,value)
 
-    print "RRRRRR"
 
     def volumes_create(self):
         def __init__(bootable_factor, replication_factor, size):
