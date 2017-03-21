@@ -13,6 +13,8 @@ class VolumeOperations(object):
         for key,value in kwargs.iteritems():
             print "%s = %s" % (key,value)
 
+    print "RRRRRR"
+
     def volumes_create(self):
         def __init__(bootable_factor, replication_factor, size):
             self.bootable_factor = bootable_factor
