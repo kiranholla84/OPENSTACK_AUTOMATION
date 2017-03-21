@@ -9,7 +9,7 @@ import sys
 import re
 
 class VolumeOperations(object):
-    def __init__(self,  bootable_factor, replication_factor, size, **kwargs):
+    def __init__(self, bootable_factor, replication_factor, size, **kwargs):
         self.bootable_factor = bootable_factor
         self.replication_factor = replication_factor
         self.size = size
