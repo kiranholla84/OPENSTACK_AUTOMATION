@@ -14,6 +14,9 @@ class VolumeOperations(object):
             print "%s = %s" % (key,value)
 
     def volumes_create(self):
+        def __init__(bootable_factor, replication_factor, size):
+            self.bootable_factor = bootable_factor
+            self.replication_factor = replication_factor
+            self.size = size
+            print "Requested stuff are %s %s %s" %(self.bootable_factor,self.replication_factor,self.size)
 
-
-    print "$$$$$$$"
