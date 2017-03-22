@@ -46,5 +46,5 @@ class VolumeOperations(object):
                     break
                 print "\nWAITING FOR STATUS OF THE VOLUME %s TO BE AVAILABLE. CURRENTLY VOLUME STATE IS IN %s\n" % (op['name'],op['status'])
                 time.sleep(10)
-                op = self.latest_volume_status(self, self.volume_name)
+                op = self.latest_volume_status()
 
