@@ -31,6 +31,9 @@ class VolumeOperations(object):
 
             print "Requested stuff are %s %s %s %s %s " %(self.bootable_factor,self.replication_factor,self.size_vol , self.type_vol , self.volume_name)
             print "\n================CREATING NON-BOOTABLE VOLUME ================\n"
+            os.chdir("/opt/stack/devstack")
+            auth_perm = ['source', 'openrc', 'admin', 'admin']
+            op_auth_perm = subprocess.check_output(auth_perm)
             list_checkOutput = ['openstack' ,'volume' ,'create' , '--size', str(self.size_vol) , '--type' , self.type_vol , self.volume_name, '-f','json']
             op = subprocess.check_output(list_checkOutput)
             op = loads(op)
