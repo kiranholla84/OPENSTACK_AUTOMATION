@@ -33,7 +33,7 @@ class VolumeOperations(object):
             print "\n================CREATING NON-BOOTABLE VOLUME ================\n"
             os.chdir("/opt/stack/devstack")
             print "Debug : CWD" , os.getcwd()
-            auth_perm = ['source', 'openrc', 'admin', 'admin']
+            # auth_perm = ['source', 'openrc', 'admin', 'admin']
             op_auth_perm = subprocess.check_output(auth_perm)
             list_checkOutput = ['openstack' ,'volume' ,'create' , '--size', str(self.size_vol) , '--type' , self.type_vol , self.volume_name, '-f','json']
             op = subprocess.check_output(list_checkOutput)
