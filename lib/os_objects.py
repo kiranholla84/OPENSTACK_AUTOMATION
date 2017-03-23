@@ -30,29 +30,29 @@ class VolumeOperations(object):
     def volumes_create(self):
         # def __init__(bootable_factor, replication_factor, size):
 
-            print "Requested stuff are %s %s %s %s %s " %(self.bootable_factor,self.replication_factor,self.size_vol , self.type_vol , self.volume_name)
-            print "\n================CREATING NON-BOOTABLE VOLUME ================\n"
-            os.chdir("/opt/stack/devstack")
-            print "Debug : CWD" , os.getcwd()
-            # auth_perm = ['source', 'openrc', 'admin', 'admin']
-            # op_auth_perm = subprocess.check_output(auth_perm)
-            list_checkOutput = ['openstack' ,'volume' ,'create' , '--size', str(self.size_vol) , '--type' , self.type_vol , self.volume_name, '-f','json']
-            op = subprocess.check_output(list_checkOutput)
-            op = loads(op)
+        print "Requested stuff are %s %s %s %s %s " %(self.bootable_factor,self.replication_factor,self.size_vol , self.type_vol , self.volume_name)
+        print "\n================CREATING NON-BOOTABLE VOLUME ================\n"
+        os.chdir("/opt/stack/devstack")
+        print "Debug : CWD" , os.getcwd()
+        # auth_perm = ['source', 'openrc', 'admin', 'admin']
+        # op_auth_perm = subprocess.check_output(auth_perm)
+        list_checkOutput = ['openstack' ,'volume' ,'create' , '--size', str(self.size_vol) , '--type' , self.type_vol , self.volume_name, '-f','json']
+        op = subprocess.check_output(list_checkOutput)
+        op = loads(op)
 
-            # non-bootable non-attached volume show
-            while (op['status'] != 'available'):
-                if (op['status'].lower == 'error'):
-                    print "\nFAILURE IN CREATING VOLUME %s. EXITING" % (op['name'])
-                    break
-                print "\nWAITING FOR STATUS OF THE VOLUME %s TO BE AVAILABLE. CURRENTLY VOLUME STATE IS IN %s\n" % (op['name'],op['status'])
-                time.sleep(10)
-                op = self.latest_volume_status()
+        # non-bootable non-attached volume show
+        while (op['status'] != 'available'):
+            if (op['status'].lower == 'error'):
+                print "\nFAILURE IN CREATING VOLUME %s. EXITING" % (op['name'])
+                break
+            print "\nWAITING FOR STATUS OF THE VOLUME %s TO BE AVAILABLE. CURRENTLY VOLUME STATE IS IN %s\n" % (op['name'],op['status'])
+            time.sleep(10)
+            op = self.latest_volume_status()
 
-            # check for creation of the volume
-            inputs = [self.volume_name, self.size_vol, self.type_vol, self.volume_available_string]
-            values = [(op['name']), op['size'], op['type'], op['status']]
-            print "VALUES", self.volume_name, self.size_vol, self.type_vol, self.volume_available_string
-            print "INPUTS", op['name'], op['size'], op['type'], op['status']
-            if values == inputs :
-                print "\nVOLUME CREATED SUCCESSFULLY\n"
+        # check for creation of the volume
+        inputs = [self.volume_name, self.size_vol, self.type_vol, self.volume_available_string]
+        values = [(op['name']), op['size'], op['type'], op['status']]
+        print "VALUES", self.volume_name, self.size_vol, self.type_vol, self.volume_available_string
+        print "INPUTS", op['name'], op['size'], op['type'], op['status']
+        if values == inputs :
+            print "\nVOLUME CREATED SUCCESSFULLY\n"
