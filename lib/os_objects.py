@@ -16,6 +16,7 @@ class VolumeOperations(object):
         self.size_vol = size_vol
         self.type_vol = type_vol
         self.volume_name = volume_name
+        self.volume_available_string = 'available'
 
     def latest_volume_status(self):
         try:
@@ -48,3 +49,10 @@ class VolumeOperations(object):
                 time.sleep(10)
                 op = self.latest_volume_status()
 
+            # check for creation of the volume
+            inputs = [self.volume_name, self.size_vol, self.type_vol, self.volume_available_string]
+            values = [(op['name']), op['size'], op['type'], op['status']]
+            print "VALUES", self.volume_name, self.size_vol, self.type_vol, self.volume_available_string
+            print "INPUTS", op['name'], op['size'], op['type'], op['status']
+            if values == inputs :
+                print "\nVOLUME CREATED SUCCESSFULLY\n"
