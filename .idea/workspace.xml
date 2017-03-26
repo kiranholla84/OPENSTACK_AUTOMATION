@@ -2,7 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="d904190e-76ab-4a94-bf95-c8c65c729177" name="Default" comment="">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lib/os_objects.py" afterPath="$PROJECT_DIR$/lib/os_objects.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/scripts/replication_enabled_volume_extend.py" afterPath="$PROJECT_DIR$/scripts/replication_enabled_volume_extend.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/scripts/tests_dont_touch_this_has_all.py" afterPath="$PROJECT_DIR$/scripts/tests_dont_touch_this_has_all.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/scripts/volume_attach_Ops.py" afterPath="$PROJECT_DIR$/scripts/volume_attach_Ops.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -18,11 +21,11 @@
   <component name="ExecutionTargetManager" SELECTED_TARGET="default_target" />
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="os_objects.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="os_objects.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/lib/os_objects.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="446">
-              <caret line="219" column="49" lean-forward="true" selection-start-line="219" selection-start-column="49" selection-end-line="219" selection-end-column="49" />
+            <state relative-caret-position="-408">
+              <caret line="48" column="52" lean-forward="false" selection-start-line="48" selection-start-column="52" selection-end-line="48" selection-end-column="52" />
               <folding>
                 <element signature="e#0#17#0" expanded="true" />
               </folding>
@@ -40,11 +43,23 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="volume_attach_Ops.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="volume_attach_Ops.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/scripts/volume_attach_Ops.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="765">
-              <caret line="45" column="66" lean-forward="false" selection-start-line="45" selection-start-column="66" selection-end-line="45" selection-end-column="66" />
+            <state relative-caret-position="340">
+              <caret line="45" column="51" lean-forward="false" selection-start-line="45" selection-start-column="51" selection-end-line="45" selection-end-column="51" />
+              <folding>
+                <element signature="e#0#17#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="replication_enabled_volume_extend.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/scripts/replication_enabled_volume_extend.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-153">
+              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
               <folding>
                 <element signature="e#0#17#0" expanded="true" />
               </folding>
@@ -59,6 +74,7 @@
       <find>server_active_string</find>
       <find>penstack' , 'volume' , 'show'</find>
       <find>latest_ser</find>
+      <find>sleep</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -68,16 +84,17 @@
     <option name="CHANGED_PATHS">
       <list>
         <option value="$PROJECT_DIR$/lib/__init__.py" />
-        <option value="$PROJECT_DIR$/scripts/volume_attach_Ops.py" />
+        <option value="$PROJECT_DIR$/scripts/replication_enabled_volume_extend.py" />
         <option value="$PROJECT_DIR$/lib/os_objects.py" />
+        <option value="$PROJECT_DIR$/scripts/volume_attach_Ops.py" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds">
     <option name="x" value="-8" />
     <option name="y" value="-8" />
-    <option name="width" value="1296" />
-    <option name="height" value="1000" />
+    <option name="width" value="1376" />
+    <option name="height" value="744" />
   </component>
   <component name="ProjectView">
     <navigator proportions="" version="1">
@@ -289,7 +306,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1296" height="1000" extended-state="7" />
+    <frame x="-8" y="-8" width="1376" height="744" extended-state="6" />
     <editor active="true" />
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
@@ -334,7 +351,15 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="XDebuggerManager">
-    <breakpoint-manager />
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/lib/os_objects.py</url>
+          <line>53</line>
+        </line-breakpoint>
+      </breakpoints>
+      <option name="time" value="1" />
+    </breakpoint-manager>
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
@@ -527,10 +552,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/scripts/volume_attach_Ops.py">
+    <entry file="file://$PROJECT_DIR$/scripts/replication_enabled_volume_extend.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="765">
-          <caret line="45" column="66" lean-forward="false" selection-start-line="45" selection-start-column="66" selection-end-line="45" selection-end-column="66" />
+        <state relative-caret-position="-153">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
             <element signature="e#0#17#0" expanded="true" />
           </folding>
@@ -539,8 +564,18 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/lib/os_objects.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="446">
-          <caret line="219" column="49" lean-forward="true" selection-start-line="219" selection-start-column="49" selection-end-line="219" selection-end-column="49" />
+        <state relative-caret-position="-408">
+          <caret line="48" column="52" lean-forward="false" selection-start-line="48" selection-start-column="52" selection-end-line="48" selection-end-column="52" />
+          <folding>
+            <element signature="e#0#17#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/scripts/volume_attach_Ops.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="340">
+          <caret line="45" column="51" lean-forward="false" selection-start-line="45" selection-start-column="51" selection-end-line="45" selection-end-column="51" />
           <folding>
             <element signature="e#0#17#0" expanded="true" />
           </folding>

@@ -39,9 +39,23 @@ class VolumeOperations(object):
         # op_auth_perm = subprocess.check_output(auth_perm)
 
         # ACTION :Modularize : Below should be modularized
-        print "\n================CREATING NON-BOOTABLE VOLUME ================\n"
-        list_checkOutput = ['openstack', 'volume', 'create', '--size', str(self.size_vol), '--type', self.type_vol,
-                            self.volume_name, '-f', 'json']
+        if (self.bootable_factor == "bootable"):
+            print "\n================CREATING BOOTABLE VOLUME ================\n"
+            bootable_string = 'true'
+
+            # Get the images dynamically
+            list_check_output = ['openstack', 'image', 'list', '-f', 'json']
+            op_image_list = subprocess.check_output(list_check_output)
+            op_image_list = yaml.load(op_image_list)
+            print "\n==>IMAGE WHICH WILL BE USED FOR BOOTABLE VOLUME CREATION IS", op_image_list[0]['Name'], "...\n"
+            list_checkOutput = ['openstack', 'volume', 'create', '--image', op_image_list[0]['Name'], '--type',
+                                self.type_vol, '--size', str(self.size_vol), self.volume_name, '-f', 'json']
+        else:
+            bootable_string = 'false'
+            print "\n================CREATING NON-BOOTABLE VOLUME ================\n"
+            list_checkOutput = ['openstack', 'volume', 'create', '--size', str(self.size_vol), '--type', self.type_vol,
+                                self.volume_name, '-f', 'json']
+
         op = subprocess.check_output(list_checkOutput)
         op = loads(op)
 
@@ -58,12 +72,45 @@ class VolumeOperations(object):
 
         # ACTION : MODULARIZE THIS AS VOLUME CHECK /SERVER CREATION CHECK/VOLUME VALUES CHECK/ SERVER VALUES CHECK
         # check for creation of the volume
-        inputs = [self.volume_name, self.size_vol, self.type_vol, self.volume_available_string]
-        values = [(op['name']), op['size'], op['type'], op['status']]
-        print "VALUES", self.volume_name, self.size_vol, self.type_vol, self.volume_available_string
-        print "INPUTS", op['name'], op['size'], op['type'], op['status']
+        inputs = [self.volume_name, self.size_vol, self.type_vol, self.volume_available_string, bootable_string]
+        values = [(op['name']), op['size'], op['type'], op['status'], op['bootable']]
+
+        print "VALUES", self.volume_name, self.size_vol, self.type_vol, self.volume_available_string , bootable_string
+        print "INPUTS", op['name'], op['size'], op['type'], op['status'] , op['bootable']
+
         if values == inputs:
             print "\nVOLUME CREATED SUCCESSFULLY\n"
+
+    def volume_extend(self, volume_name, new_volume_size):
+
+        # print "\n================VOLUME EXTEND================\n"
+        print "New size is" , new_volume_size
+        list_check_output = ['openstack' , 'volume' , 'set' , '--size' , str(new_volume_size), volume_name]
+        op_extend_vol = subprocess.check_output(list_check_output)
+
+        ## check for extension of volume
+        op = subprocess.check_output(['openstack' , 'volume' , 'show', volume_name , '-f', 'json'])
+        op = yaml.load(op)
+
+        while (op['status'] != 'available'):
+            if (op['status'].lower == 'error'):
+                print "\nFAILURE IN EXTENDING VOLUME %s. EXITING" % (op['name'])
+                break
+            print "\nWAITING FOR STATUS OF THE VOLUME %s TO BE AVAILABLE. CURRENTLY VOLUME STATE IS IN %s\n" % (
+                op['name'], op['status'])
+            time.sleep(10)
+            op = self.latest_volume_status()
+
+        print "NEW SIZE FROM OP" , op['size']
+
+        inputs = [self.volume_name, new_volume_size , self.type_vol, self.volume_available_string]
+        values = [(op['name']), op['size'], op['type'], op['status']]
+
+        if values == inputs:
+            print "\nVOLUME EXTENDED SUCCESSFULLY\n"
+        else:
+            print "VALUES" ,values
+            print "INPUTS", inputs
 
     def volume_delete(self,volume_name):
 
@@ -72,14 +119,14 @@ class VolumeOperations(object):
         list_checkOutput_delete = ['openstack' ,'volume' ,'delete' ,  volume_name]
         op = subprocess.check_output(list_checkOutput_delete)
 
-        op = latest_volume_status(volume_name)
+        op = self.latest_volume_status()
 
         # Enter only if the volume exists
         if op != 1:
             while (op['status'] == 'deleting'):
                 print "\nWAITING FOR VOLUME %s TO BE DELETED. CURRENTLY VOLUME STATE IS IN %s\n" % (op['name'], op['status'])
                 time.sleep(10)
-                op = latest_volume_status(volume_name)
+                op = self.latest_volume_status()
                 if op == 1:
                     break
                     print "CURRENT STATUS OF VOLUME IS" , op , "HENCE CONTINUING"
@@ -195,25 +242,34 @@ class InstanceOperations(object):
         list_check_output = ['openstack' , 'server' , 'remove' , 'volume' , self.server_name, volume_name]
         op_attach_vol = subprocess.check_output(list_check_output)
 
-        # check for addition of volume to server
-        op = subprocess.check_output(['openstack' , 'volume' , 'show', volume_name , '-f', 'json'])
-        op = yaml.load(op)
+        # check for detach of volume to server
+        volume_detach_subprocess_output_yaml = subprocess.check_output(['openstack' , 'volume' , 'show', volume_name , '-f', 'json'])
+        volume_detach_subprocess_output_yaml = yaml.load(op)
 
-        print "op is" , op
+        # ACTION : Modularize, combine with volume waiting. Pass the required status , error status as function variables
+        while (volume_detach_subprocess_output_yaml['status'] != 'available'):
+            if (volume_detach_subprocess_output_yaml['status'].lower == 'error'):
+                print "\nFAILURE IN DETACHING VOLUME %s. EXITING" % (volume_detach_subprocess_output_yaml['name'])
+                break
+            print "\nWAITING FOR STATUS OF THE VOLUME %s TO BE AVAILABLE. CURRENTLY VOLUME STATE IS IN %s\n" % (
+            volume_attach_subprocess_output_yaml['name'], volume_detach_subprocess_output_yaml['status'])
+            time.sleep(10)
+            volume_detach_subprocess_output_yaml = subprocess.check_output(['openstack', 'volume', 'show', volume_name, '-f', 'json'])
+            volume_detach_subprocess_output_yaml = yaml.load(volume_detach_subprocess_output_yaml)
+
+        print "volume_detach_subprocess_output_yaml is" , volume_detach_subprocess_output_yaml
         print "\n\n"
         try:
-            attachment_details_server_id = op['attachments'][0]['server_id']
-            attachment_details_attachment_id = op['attachments'][0]['attachment_id']
+            attachment_details_server_id = volume_detach_subprocess_output_yaml['attachments'][0]['server_id']
+            attachment_details_attachment_id = volume_detach_subprocess_output_yaml['attachments'][0]['attachment_id']
 
-            attachment_details_volume_id = op['attachments'][0]['volume_id']
-            attachment_details_device = op['attachments'][0]['device']
+            attachment_details_volume_id = volume_detach_subprocess_output_yaml['attachments'][0]['volume_id']
+            attachment_details_device = volume_detach_subprocess_output_yaml['attachments'][0]['device']
         except IndexError:
-            if op['status'] == 'available':
+            if volume_detach_subprocess_output_yaml['status'] == 'available':
                 print "There does not seem to be any volume attached to server. Yes it is detached!. Now check the status of the volume"
             else :
                 print "Some how the status of the volume is not available"
-
-        print "attachment details %s :: %s ::  %s :: %s"  %(attachment_details_server_id, attachment_details_attachment_id,attachment_details_volume_id,attachment_details_device)
 
     def server_delete(self,server_name):
         print "\n================DELETION OF INSTANCE================\n"

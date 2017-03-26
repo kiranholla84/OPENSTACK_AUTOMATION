@@ -248,6 +248,8 @@ def check_pattern_match(pattern,input_string):
 # # print "\n================VOLUME CLONING FROM SNAPSHOT================\n"
 # list_check_output = ['openstack' , 'volume' , 'create' , '--source' , snapshot_volume_name, cloned_volume_name]
 
+# # print "\n================CREATING A BOOTABLE VOLUME================\n"
+
 print "\n==>CREATING A BOOTABLE VOLUME" ,volume_name_bootable,"...\n"
 ##openstack volume create --image cirros-0.3.4-x86_64-uec --type VMAX_SILVER --size 20 qe_neither_bootable_1
 

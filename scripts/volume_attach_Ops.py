@@ -29,20 +29,27 @@ server_name =  'qe' + '_server_' + str(time.time())# ACTION : Should be combinat
 server_from_bootable_volume = 'qe_server_From_bootable_volume'+ "_" + str(time.time())
 volume_name_bootable = 'qe_volume_bootable' + "_" + str(time.time())
 
-#PRESETUP : Volume Creation Action
+# #PRESETUP : Volume Creation Action
 os_objects_handle_volume = VolumeOperations("nonBootable", "nonReplicated", 5 , non_rep_vol_type, volume_name)
 non_bootable_volume_list = os_objects_handle_volume.volumes_create()
 
-#PRESETUP : Instance Creation Action
+# #PRESETUP : Bootable Volume Creation Action
+os_objects_handle_volume_bootable = VolumeOperations("bootable", "nonReplicated", 5 , non_rep_vol_type, volume_name_bootable)
+bootable_volume_list = os_objects_handle_volume_bootable.volumes_create()
+
+# #PRESETUP : Instance Creation Action
 os_objects_handle_server = InstanceOperations(server_name,image,flavor)
 print "\nINSTANCE CREATION..." , os_objects_handle_server.server_create()
 
 # ACTUAL TEST  : ATTACH VOLUMES
 print "\nVOLUME ATTACH...",os_objects_handle_server.volume_attach(volume_name)
+print "\nVOLUME ATTACH...",os_objects_handle_server.volume_attach(volume_name_bootable)
 
 # TEARDOWN
 volume_detach = os_objects_handle_server.volume_detach(volume_name)
 volume_delete = os_objects_handle_volume.volume_delete(volume_name)
+volume_detach = os_objects_handle_volume_bootable.volume_detach(volume_name_bootable)
+volume_delete = os_objects_handle_volume_bootable.volume_delete(volume_name_bootable)
 server_delete = os_objects_handle_server.server_delete(server_name)
 
 
