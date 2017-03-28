@@ -224,7 +224,7 @@ def check_pattern_match(pattern,input_string):
 
 # # print "\n================VOLUME SNAPSHOT CREATION CHECK================\n"
 # #openstack volume snapshot show snap_qe_vol_silver_99 -f  json
-# list_check_output = ['openstack' , 'volume' ,'snapshot' ,'show' , snapshot_volume_name , '-f', 'json']
+# list_check_output = ['openstack' , 'volumdshot_volume_name , '-f', 'json']
 # op_snaps_vol_show = subprocess.check_output(list_check_output)
 # print "Type of snap output is before yaml" , type(op_snaps_vol_show)
 #

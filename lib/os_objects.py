@@ -17,7 +17,17 @@ class VolumeOperations(object):
         self.size_vol = size_vol
         self.type_vol = type_vol
         self.volume_name = volume_name
-        self.volume_available_string = 'available'
+        self.available_string = 'available'
+
+    def latest_volume_snapshot_status(self,snapshot_name):
+        try:
+            op = subprocess.check_output(['openstack', 'volume', 'snapshot' ,'show', snapshot_name, '-f', 'json'])
+            op = yaml.load(op)
+            return op
+        except subprocess.CalledProcessError as e:
+            print "\nTHERE IS NO SNAPSHOT WITH THE NAME %s" % (snapshot_name)
+            print "\nERROR CODE" , e.returncode
+            return e.returncode
 
     def latest_volume_status(self):
         try:
@@ -72,10 +82,10 @@ class VolumeOperations(object):
 
         # ACTION : MODULARIZE THIS AS VOLUME CHECK /SERVER CREATION CHECK/VOLUME VALUES CHECK/ SERVER VALUES CHECK
         # check for creation of the volume
-        inputs = [self.volume_name, self.size_vol, self.type_vol, self.volume_available_string, bootable_string]
+        inputs = [self.volume_name, self.size_vol, self.type_vol, self.available_string, bootable_string]
         values = [(op['name']), op['size'], op['type'], op['status'], op['bootable']]
 
-        print "VALUES", self.volume_name, self.size_vol, self.type_vol, self.volume_available_string , bootable_string
+        print "VALUES", self.volume_name, self.size_vol, self.type_vol, self.available_string , bootable_string
         print "INPUTS", op['name'], op['size'], op['type'], op['status'] , op['bootable']
 
         if values == inputs:
@@ -103,7 +113,7 @@ class VolumeOperations(object):
 
         print "NEW SIZE FROM OP" , op['size']
 
-        inputs = [self.volume_name, new_volume_size , self.type_vol, self.volume_available_string]
+        inputs = [self.volume_name, new_volume_size , self.type_vol, self.available_string]
         values = [(op['name']), op['size'], op['type'], op['status']]
 
         if values == inputs:
@@ -111,6 +121,70 @@ class VolumeOperations(object):
         else:
             print "VALUES" ,values
             print "INPUTS", inputs
+
+    def volume_snapshot_create(self,volume_name,number_of_snapshots):
+
+        # print "\n================CREATION OF VOLUME SNAPSHOT================\n"
+        snapshot_name = "snapshot" + "_" + volume_name
+        self.snapshot_description = "THIS IS THE DESCRIPTION OF SNAPSHOT %s" % (snapshot_name)
+        list_check_output = ['openstack' , 'volume' ,'snapshot' ,'create' , "--volume" ,volume_name , "--description", self.snapshot_description , snapshot_name]
+        op_snaps_vol_create = subprocess.check_output(list_check_output)
+        create_snapshot_operation = self.volume_snapshot_check(snapshot_name)
+        print "CREATE SNAPSHOT OPERATION RESULTED IN ", create_snapshot_operation
+        return create_snapshot_operation
+
+    def volume_snapshot_delete(self, snapshot_name):
+
+        print "\n================DELETION OF VOLUME SNAPSHOT %s ================\n" % (snapshot_name)
+        list_check_output = ['openstack', 'volume', 'snapshot', 'delete', str(snapshot_name), '--force']
+        op_snaps_vol_create = subprocess.check_output(list_check_output)
+        delete_snapshot_operation = self.volume_snapshot_check(snapshot_name)
+
+        print "DELETE SNAPSHOT OPERATION RESULTED IN " , delete_snapshot_operation
+
+    def volume_snapshot_check(self,snapshot_name):
+
+        # Get the volume status to get all the volume parameters
+        volume_status = self.latest_volume_status()
+
+        # print "\n================VOLUME SNAPSHOT CREATION CHECK================\n"
+        list_check_output = ['openstack' , 'volume' ,'snapshot' ,'show' , snapshot_name , '-f', 'json']
+        self.op_snaps_vol_show = subprocess.check_output(list_check_output)
+        # print "Type of snap output is before yaml" , type(op_snaps_vol_show)
+
+        self.op_snaps_vol_show = yaml.load(self.op_snaps_vol_show)
+
+        # this code will be entered if the delete is called
+        while(self.op_snaps_vol_show['status'] == 'deleting'):
+            time.sleep(5)
+            print "\nWAITING FOR VOLUME SNAPSHOT %s TO BE DELETED. CURRENTLY VOLUME STATE IS IN %s\n" % (
+            self.op_snaps_vol_show['name'], self.op_snaps_vol_show['status'])
+            self.op_snaps_vol_show = self.latest_volume_snapshot_status(snapshot_name)
+            if self.op_snaps_vol_show == 1:
+                print "op_snaps_vol_show IS", self.op_snaps_vol_show
+                print "SNAPSHOT %s OF VOLUME %s SUCCESSFULLY DELETED" %(snapshot_name, volume_status['name'])
+                break
+
+        # this will be entered when create is called
+        if self.op_snaps_vol_show == 1:
+            # Do nothing as the above variable belongs to delete call
+            pass
+        else:
+            while(self.op_snaps_vol_show['status'] != 'available'):
+                print "\nWAITING FOR VOLUME SNAPSHOT %s TO BE AVAILABLE. CURRENTLY VOLUME STATE IS IN %s\n" % (self.op_snaps_vol_show['name'], self.op_snaps_vol_show['status'])
+                time.sleep(10)
+                self.op_snaps_vol_show = self.latest_volume_snapshot_status(snapshot_name)
+
+            inputs = [volume_status['id'] , snapshot_name, self.available_string , self.size_vol, self.snapshot_description]
+            values = [self.op_snaps_vol_show['volume_id'],self.op_snaps_vol_show['name'], self.op_snaps_vol_show['status'], self.op_snaps_vol_show['size'], self.op_snaps_vol_show['description']]
+
+            # ACTION REQUIRED : THIS CAN BE MODULARIZED
+            if values == inputs:
+                print "\nVOLUME SNAPSHOTTED SUCCESSFULLY\n"
+                return snapshot_name
+            else:
+                print "VALUES", values
+                print "INPUTS", inputs
 
     def volume_delete(self,volume_name):
 
@@ -244,7 +318,7 @@ class InstanceOperations(object):
 
         # check for detach of volume to server
         volume_detach_subprocess_output_yaml = subprocess.check_output(['openstack' , 'volume' , 'show', volume_name , '-f', 'json'])
-        volume_detach_subprocess_output_yaml = yaml.load(op)
+        volume_detach_subprocess_output_yaml = yaml.load(volume_detach_subprocess_output_yaml)
 
         # ACTION : Modularize, combine with volume waiting. Pass the required status , error status as function variables
         while (volume_detach_subprocess_output_yaml['status'] != 'available'):
@@ -252,7 +326,7 @@ class InstanceOperations(object):
                 print "\nFAILURE IN DETACHING VOLUME %s. EXITING" % (volume_detach_subprocess_output_yaml['name'])
                 break
             print "\nWAITING FOR STATUS OF THE VOLUME %s TO BE AVAILABLE. CURRENTLY VOLUME STATE IS IN %s\n" % (
-            volume_attach_subprocess_output_yaml['name'], volume_detach_subprocess_output_yaml['status'])
+            volume_detach_subprocess_output_yaml['name'], volume_detach_subprocess_output_yaml['status'])
             time.sleep(10)
             volume_detach_subprocess_output_yaml = subprocess.check_output(['openstack', 'volume', 'show', volume_name, '-f', 'json'])
             volume_detach_subprocess_output_yaml = yaml.load(volume_detach_subprocess_output_yaml)
@@ -276,7 +350,7 @@ class InstanceOperations(object):
         o_chdir = os.chdir("/opt/stack/devstack")
         instance_delete = ['openstack' ,'server' ,'delete', server_name]
         op = subprocess.check_output(instance_delete)
-        op = self.latest_server_status(server_name)
+        op = self.latest_server_status()
 
         print "#op during deletion is and task state\n" , op , op['OS-EXT-STS:task_state']
 
@@ -285,7 +359,7 @@ class InstanceOperations(object):
             while (op['OS-EXT-STS:task_state'] == 'deleting'):
                 print "\nWAITING FOR SERVER %s TO BE DELETED. CURRENTLY SERVER STATE IS IN %s\n" % (op['name'], op['OS-EXT-STS:task_state'])
                 time.sleep(10)
-                op = self.latest_server_status(server_name)
+                op = self.latest_server_status()
                 if op == 1:
                     break
                 print "CURRENT STATUS OF SERVER IS" , op , "HENCE CONTINUING"
