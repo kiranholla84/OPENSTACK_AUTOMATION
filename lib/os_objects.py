@@ -93,7 +93,7 @@ class VolumeOperations(object):
             if (op['status'].lower == 'error'):
                 print "\nFAILURE IN CREATING VOLUME %s. EXITING" % (op['name'])
                 break
-            print "\nWAITING FOR STATUS OF THE VOLUME %s TO BE AVAILABLE. CURRENTLY VOLUME STATE IS IN %s\n" % (
+            print "\nWAITING FOR STATUS OF THE NON-BOOTABLE VOLUME %s TO BE AVAILABLE. CURRENTLY VOLUME STATE IS IN %s\n" % (
             op['name'], op['status'])
             time.sleep(10)
             op = self.latest_volume_status()
