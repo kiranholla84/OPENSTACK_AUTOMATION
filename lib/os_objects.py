@@ -29,6 +29,24 @@ class VolumeOperations(object):
             print "\nERROR CODE" , e.returncode
             return e.returncode
 
+    def any_volume_status(volume_name):
+        try:
+            op = subprocess.check_output(['openstack', 'volume', 'show', volume_name, '-f', 'json'])
+            op = yaml.load(op)
+            return op
+        except subprocess.CalledProcessError as e:
+            print "\nTHERE IS NO VOLUME WITH THE NAME %s" % (self.volume_name)
+            return e.returncode
+
+    def any_snapshot_status(snapshot_name):
+        try:
+            op = subprocess.check_output(['openstack', 'volume', 'snapshot' ,'show', snapshot_name, '-f', 'json'])
+            op = yaml.load(op)
+            return op
+        except subprocess.CalledProcessError as e:
+            print "\nTHERE IS NO VOLUME WITH THE NAME %s" % (self.volume_name)
+            return e.returncode
+
     def latest_volume_status(self):
         try:
             op = subprocess.check_output(['openstack', 'volume', 'show', self.volume_name, '-f', 'json'])
@@ -82,7 +100,8 @@ class VolumeOperations(object):
 
         # ACTION : MODULARIZE THIS AS VOLUME CHECK /SERVER CREATION CHECK/VOLUME VALUES CHECK/ SERVER VALUES CHECK
         # check for creation of the volume
-        inputs = [self.volume_name, self.size_vol, self.type_vol, self.available_string, bootable_string]
+
+        inputs = [self.volume_name, self.size_vol, self.type_vol, self.available_string , bootable_string]
         values = [(op['name']), op['size'], op['type'], op['status'], op['bootable']]
 
         print "VALUES", self.volume_name, self.size_vol, self.type_vol, self.available_string , bootable_string
@@ -90,6 +109,56 @@ class VolumeOperations(object):
 
         if values == inputs:
             print "\nVOLUME CREATED SUCCESSFULLY\n"
+
+    def volumes_clone(self, type_of_source , input_source , name_of_target):
+
+        # ACTION : Remove the full block below
+        print "Requested stuff are %s %s %s %s %s " % (
+            self.bootable_factor, self.replication_factor, self.size_vol, self.type_vol, self.volume_name)
+        os.chdir("/opt/stack/devstack")
+        print "Debug : CWD", os.getcwd()
+        # auth_perm = ['source', 'openrc', 'admin', 'admin']
+        # op_auth_perm = subprocess.check_output(auth_perm)
+
+        # ACTION :Modularize : Below should be modularized
+        if (type_of_source == "snapshot"):
+            print "\n================CREATING VOLUME FROM SNAPSHOT AS THE SOURCE================\n"
+
+            list_checkOutput = ['openstack', 'volume', 'create', '--snapshot', input_source, '--type',
+                                self.type_vol, name_of_target, '-f', 'json']
+
+            source_status = self.any_snapshot_status(input_source)
+
+        else:
+            print "\n================CREATING VOLUME FROM ANOTHER VOLUME AS THE SOURCE ================\n"
+            list_checkOutput = ['openstack', 'volume', 'create', '--source', input_source, '--type', self.type_vol,
+                                name_of_target, '-f', 'json']
+            source_status = self.any_volume_status(input_source)
+
+        op = subprocess.check_output(list_checkOutput)
+        op = loads(op)
+
+        # ACTION : MODULARIZE THIS ACROSS FOR ALL ASYNC ITEMS
+        # non-bootable non-attached volume show
+        while (op['status'] != 'available'):
+            if (op['status'].lower == 'error'):
+                print "\nFAILURE IN CREATING VOLUME %s. EXITING" % (op['name'])
+                break
+            print "\nWAITING FOR STATUS OF THE VOLUME %s TO BE AVAILABLE. CURRENTLY VOLUME STATE IS IN %s\n" % (
+                op['name'], op['status'])
+            time.sleep(10)
+            op = self.latest_volume_status()
+
+        # ACTION : MODULARIZE THIS AS VOLUME CHECK /SERVER CREATION CHECK/VOLUME VALUES CHECK/ SERVER VALUES CHECK
+        # check for creation of the volume
+        inputs = [name_of_target, source_status['size'], self.type_vol, self.available_string, source_status['bootable']]
+        values = [(op['name']), op['size'], op['type'], op['status'], op['bootable']]
+
+        print "VALUES", values
+        print "INPUTS", inputs
+
+        if values == inputs:
+            print "\nVOLUME CREATED SUCCESSFULLY FROM SOURCE\n"
 
     def volume_extend(self, volume_name, new_volume_size):
 
