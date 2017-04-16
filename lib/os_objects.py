@@ -35,12 +35,12 @@ class VolumeOperations(object):
             op = yaml.load(op)
             return op
         except subprocess.CalledProcessError as e:
-            print "\nTHERE IS NO VOLUME WITH THE NAME %s" % (self.volume_name)
+            print "\nTHERE IS NO VOLUME WITH THE NAME %s" % (volume_name)
             return e.returncode
 
     def any_snapshot_status(snapshot_name):
         try:
-            op = subprocess.check_output(['openstack', 'volume', 'snapshot' ,'show', snapshot_name, '-f', 'json'])
+            op = subprocess.check_output(['openstack', 'volume', 'snapshot','show', snapshot_name, '-f', 'json'])
             op = yaml.load(op)
             return op
         except subprocess.CalledProcessError as e:
@@ -127,7 +127,7 @@ class VolumeOperations(object):
             list_checkOutput = ['openstack', 'volume', 'create', '--snapshot', input_source, '--type',
                                 self.type_vol, name_of_target, '-f', 'json']
 
-            source_status = self.any_snapshot_status()
+            source_status = self.any_snapshot_status(input_source)
 
         else:
             print "\n================CREATING VOLUME FROM ANOTHER VOLUME AS THE SOURCE ================\n"
