@@ -44,7 +44,7 @@ class VolumeOperations(object):
             op = yaml.load(op)
             return op
         except subprocess.CalledProcessError as e:
-            print "\nTHERE IS NO VOLUME WITH THE NAME %s" % (self.volume_name)
+            print "\nTHERE IS NO VOLUME WITH THE NAME %s" % (snapshot_name)
             return e.returncode
 
     def latest_volume_status(self):
