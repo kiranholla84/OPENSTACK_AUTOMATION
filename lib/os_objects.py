@@ -152,8 +152,8 @@ class VolumeOperations(object):
 
         # ACTION : MODULARIZE THIS AS VOLUME CHECK /SERVER CREATION CHECK/VOLUME VALUES CHECK/ SERVER VALUES CHECK
         # check for creation of the volume
-        inputs = [name_of_target, source_status['size'], self.type_vol, self.available_string, source_status['bootable']]
-        values = [(op['name']), op['size'], op['type'], op['status'], op['bootable']]
+        inputs = [name_of_target, source_status['size'], self.type_vol, self.available_string]
+        values = [(op['name']), op['size'], op['type'], op['status']]
 
         print "VALUES", values
         print "INPUTS", inputs
