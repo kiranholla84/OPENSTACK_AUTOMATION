@@ -20,8 +20,8 @@
       <file leaf-file-name="os_objects.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/lib/os_objects.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="413">
-              <caret line="155" column="68" lean-forward="false" selection-start-line="155" selection-start-column="68" selection-end-line="155" selection-end-column="68" />
+            <state relative-caret-position="345">
+              <caret line="136" column="68" lean-forward="false" selection-start-line="136" selection-start-column="68" selection-end-line="136" selection-end-column="68" />
               <folding>
                 <element signature="e#0#17#0" expanded="true" />
               </folding>
@@ -107,12 +107,13 @@
       <find>latest_volume_sn</find>
       <find>try</find>
       <find>latest_vol</find>
-      <find>latest_volume_snapshot_status</find>
       <find>break</find>
       <find>['name</find>
       <find>snap</find>
       <find>volume_DE</find>
       <find>any_snapshot_status</find>
+      <find>any_vo</find>
+      <find>latest_volume_snapshot_status</find>
       <find>any_volume_status</find>
     </findStrings>
   </component>
@@ -774,8 +775,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/lib/os_objects.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="413">
-          <caret line="155" column="68" lean-forward="false" selection-start-line="155" selection-start-column="68" selection-end-line="155" selection-end-column="68" />
+        <state relative-caret-position="345">
+          <caret line="136" column="68" lean-forward="false" selection-start-line="136" selection-start-column="68" selection-end-line="136" selection-end-column="68" />
           <folding>
             <element signature="e#0#17#0" expanded="true" />
           </folding>
