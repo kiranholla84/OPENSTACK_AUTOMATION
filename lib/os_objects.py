@@ -136,6 +136,7 @@ class VolumeOperations(object):
                                 name_of_target, '-f', 'json']
             source_status = self.any_volume_status(self.input_source)
 
+
         op = subprocess.check_output(list_checkOutput)
         op = loads(op)
 
