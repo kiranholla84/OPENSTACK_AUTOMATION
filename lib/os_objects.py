@@ -127,13 +127,13 @@ class VolumeOperations(object):
             list_checkOutput = ['openstack', 'volume', 'create', '--snapshot', input_source, '--type',
                                 self.type_vol, name_of_target, '-f', 'json']
 
-            source_status = self.any_snapshot_status(input_source)
+            source_status = self.any_snapshot_status()
 
         else:
             print "\n================CREATING VOLUME FROM ANOTHER VOLUME AS THE SOURCE ================\n"
             list_checkOutput = ['openstack', 'volume', 'create', '--source', input_source, '--type', self.type_vol,
                                 name_of_target, '-f', 'json']
-            source_status = self.any_volume_status(input_source)
+            source_status = self.any_volume_status()
 
         op = subprocess.check_output(list_checkOutput)
         op = loads(op)
