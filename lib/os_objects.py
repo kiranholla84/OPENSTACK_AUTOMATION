@@ -112,6 +112,7 @@ class VolumeOperations(object):
 
     def volumes_clone(self, type_of_source , input_source , name_of_target):
 
+        self.input_source = input_source
         # ACTION : Remove the full block below
         print "Requested stuff are %s %s %s %s %s " % (
             self.bootable_factor, self.replication_factor, self.size_vol, self.type_vol, self.volume_name)
