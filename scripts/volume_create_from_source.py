@@ -43,10 +43,10 @@ snapshot_name_1 = os_objects_handle_volume.volume_snapshot_create(volume_name, n
 volume_from_snapshot = 'cloned_from_snapshot_' + snapshot_name_1
 
 # ACTUAL TEST : CREATE VOLUMES FROM SOURCE=SNAPSHOT
-os_objects_handle_volume = os_objects_handle_volume.volumes_clone("snapshot", snapshot_name_1, volume_from_snapshot)
+result_snapshot_os_objects_handle_volume = os_objects_handle_volume.volumes_clone("snapshot", snapshot_name_1, volume_from_snapshot)
 
 # ACTUAL TEST : CREATE VOLUMES FROM SOURCE=VOLUME
-os_objects_handle_volume = os_objects_handle_volume.volumes_clone("volume",volume_name, volume_from_volume)
+result_clone_os_objects_handle_volume = os_objects_handle_volume.volumes_clone("volume",volume_name, volume_from_volume)
 
 # TEARDOWN
 os_objects_handle_volume.volume_snapshot_delete(snapshot_name_1)
