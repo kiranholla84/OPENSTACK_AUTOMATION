@@ -23,7 +23,7 @@ volume_available_string = 'available'
 server_available_string = 'ACTIVE'
 bootable_string = 'true'
 new_volume_size = size_vol +  10
-non_rep_vol_type = 'VMAX_MPS_SILVER_NONE'
+non_rep_vol_type = 'VMAX_SILVER'
 volume_name = 'qe_' + non_rep_vol_type + '_' + str(time.time()) # ACTION : Should be combination of testname, qe, volume,  timestamp of creation
 volume_from_volume = 'cloned_from_' + volume_name
 
