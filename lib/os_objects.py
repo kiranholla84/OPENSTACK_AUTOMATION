@@ -19,6 +19,20 @@ class VolumeOperations(object):
         self.volume_name = volume_name
         self.available_string = 'available'
 
+    def async_task_wait_process(self, op , type_of_object , name_of_object, initial_async_state , final_async_state):
+        while (op['status'] != final_async_state) and (op['status'] == initial_async_state):
+            if (op['status'].lower == 'error'):
+                print "\nFAILURE IN VOLUME/SNAPSHOT %s ASYNC OPERATION. EXITING" % (op['name'])
+                break
+            print "\nWAITING FOR STATUS OF THE VOLUME/SNAPSHOT %s TO BE %s. CURRENTLY VOLUME STATE IS IN %s\n" % (
+                op['name'],final_async_state , op['status'])
+            time.sleep(10)
+
+            if type_of_object == "volume" :
+                op = self.any_volume_status(name_of_object)
+            elif type_of_object == "snapshot" :
+                op = self.latest_volume_snapshot_status(name_of_object)
+
     def latest_volume_snapshot_status(self,snapshot_name):
         try:
             op = subprocess.check_output(['openstack', 'volume', 'snapshot' ,'show', snapshot_name, '-f', 'json'])
@@ -303,7 +317,7 @@ class InstanceOperations(object):
         print "\n================CREATION OF EMPTY INSTANCE================\n"
         print "Requested stuff SERVER ARE are %s %s %s" % (self.image_name, self.server_name, self.flavour)
         instanceCreation_subprocess_ob = ['openstack', 'server', 'create', '--image', self.image_name, '--flavor',
-                                          self.flavour, self.server_name, '-f', 'json']
+                                          self.flavour, self.server_name, '--nic', 'net-id=' , 'private']
         instanceCreated_ob = subprocess.check_output(instanceCreation_subprocess_ob)
         op = loads(instanceCreated_ob)
         self.server_id = op['id']
