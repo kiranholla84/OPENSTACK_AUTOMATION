@@ -19,29 +19,61 @@ class VolumeOperations(object):
         self.volume_name = volume_name
         self.available_string = 'available'
 
-    def async_task_wait_process_volume_snapshot(self, type_of_object , name_of_object, final_async_state):
+    def volume_snapshot_status_call(self, type_of_object, name_of_object):
 
-        # MODULARIZE : INITIAL VOLUME STATUS
-        if type_of_object == "volume":
-            op_state = self.any_volume_status(name_of_object)
-        elif type_of_object == "snapshot":
-            op_state = self.any_snapshot_status(name_of_object)
+        self.type_of_object = type_of_object
+        self.name_of_object = name_of_object
 
-        while (op_state['status'] != final_async_state):
-            if (op_state['status'].lower == 'error'):
+        if self.type_of_object == "volume":
+            self.op_state = self.any_volume_status(name_of_object)
+        elif self.type_of_object == "snapshot":
+            self.op_state = self.any_snapshot_status(name_of_object)
+
+        return self.op_state
+
+    def async_task_wait_process_for_volume_snapshot(self, type_of_object , name_of_object, final_async_state):
+
+        # Get the initial volume or snapshot status
+        self.op_state = self.volume_snapshot_status_call(type_of_object, name_of_object)
+
+        # Now wait for the state of the volume or snapshot to change to "Available"
+        while (self.op_state['status'] != final_async_state):
+
+            # Sometimes the status may go to error. If that is the case return the message to the yser
+            if (self.op_state['status'].lower == 'error'):
                 print "\nFAILURE IN VOLUME/SNAPSHOT %s ASYNC OPERATION. EXITING" % name_of_object
                 break
             print "\nWAITING FOR STATUS OF THE VOLUME/SNAPSHOT %s TO BE IN %s STATE..\nCURRENTLY VOLUME STATE IS IN %s STATE\n" % (
-                name_of_object, final_async_state, op_state['status'])
+                name_of_object, final_async_state, self.op_state['status'])
             time.sleep(10)
 
-            # MODULARIZE : Interim Volume status
-            if type_of_object == "volume" :
-                op_state = self.any_volume_status(name_of_object)
-            elif type_of_object == "snapshot" :
-                op_state = self.any_snapshot_status(name_of_object)
+            # This is to get the latest status dynamically
+            self.op_state = self.volume_snapshot_status_call(type_of_object, name_of_object)
 
-        return op_state
+        return self.op_state
+
+    def async_task_delete_wait_process_for_volume_snapshot(self, type_of_object, name_of_object, final_async_state):
+
+        self.type_of_object = type_of_object
+        self.name_of_object = name_of_object
+
+        # Get the initial volume or snapshot status
+        self.op_state = self.volume_snapshot_status_call(type_of_object, name_of_object)
+
+        # Now wait till the volume is getting deleted
+        while (self.op_state['status'] == 'deleting'):
+            time.sleep(5)
+            print "\nWAITING FOR VOLUME SNAPSHOT %s TO BE DELETED. CURRENTLY VOLUME STATE IS IN %s\n" % (
+                self.op_state['name'], self.op_state['status'])
+
+            # This is the get the latest status dynamically
+            self.op_snaps_vol_show = self.volume_snapshot_status_call(type_of_object, name_of_object)
+
+            if self.op_snaps_vol_show == 1:
+                print "%s WITH NAME %s SUCCESSFULLY DELETED" % (type_of_object , name_of_object)
+                return 1
+            else:
+                return 0
 
     def any_snapshot_status(self,snapshot_name):
         try:
