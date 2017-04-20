@@ -78,7 +78,7 @@ non_bootable_volume_list = os_objects_handle_volume.volumes_create()
 # DELETE VOLUMES
 "\nMAIN SCRIPT : VOLUME DELETION"
 volume_delete = os_objects_handle_volume.volume_delete(volume_name)
-print "volume_delete is %s" volume_delete
+print "volume_delete is %s" %volume_delete
 # volume_delete = os_objects_handle_volume.volume_delete(volume_from_snapshot)
 # volume_delete = os_objects_handle_volume.volume_delete(volume_from_volume)
 
