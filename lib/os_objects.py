@@ -96,7 +96,7 @@ class VolumeOperations(object):
             return op
         except subprocess.CalledProcessError as e:
             print "\nTHERE IS NO VOLUME WITH THE NAME %s" % (volume_name)
-            print "\nDEBUG : ERROR RETURN CODE" % (e.returncode)
+            print "\nDEBUG : ERROR RETURN CODE %s" % (e.returncode)
             return e.returncode
 
     def volumes_create(self):
