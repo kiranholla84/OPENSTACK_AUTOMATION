@@ -70,7 +70,7 @@ class VolumeOperations(object):
             # This is the get the latest status dynamically
             self.op_state = self.volume_or_snapshot_status_call(type_of_object, name_of_object)
 
-        print "%sDEBUG: op_snaps_vol_show is %s" % self.op_state
+        print "DEBUG: op_snaps_vol_show is %s" % self.op_state
 
         if self.op_state == 1:
             print "%s WITH NAME %s SUCCESSFULLY DELETED" % (type_of_object , name_of_object)
