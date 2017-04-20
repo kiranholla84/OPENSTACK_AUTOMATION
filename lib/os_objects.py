@@ -29,6 +29,7 @@ class VolumeOperations(object):
         elif self.type_of_object == "snapshot":
             self.op_state = self.any_snapshot_status(name_of_object)
 
+        print "DEBUG: RETURNING FROM volume_or_snapshot_status_call %s" %(self.op_state)
         return self.op_state
 
     def async_task_wait_process_for_volume_and_snapshot(self, type_of_object , name_of_object, final_async_state):
@@ -67,14 +68,15 @@ class VolumeOperations(object):
                 self.op_state['name'], self.op_state['status'])
 
             # This is the get the latest status dynamically
-            self.op_snaps_vol_show = self.async_task_delete_wait_process_for_volume_and_snapshot(type_of_object, name_of_object)
+            self.op_state = self.volume_or_snapshot_status_call(type_of_object, name_of_object)
 
-            if self.op_snaps_vol_show == 1:
-                print "%s WITH NAME %s SUCCESSFULLY DELETED" % (type_of_object , name_of_object)
-                print "%sDEBUG: op_snaps_vol_show is %s" %self.op_snaps_vol_show
-                return 0
-            else:
-                return 1
+        print "%sDEBUG: op_snaps_vol_show is %s" % self.op_state
+
+        if self.op_state == 1:
+            print "%s WITH NAME %s SUCCESSFULLY DELETED" % (type_of_object , name_of_object)
+            return 0
+        else:
+            return 1
 
     def any_snapshot_status(self,snapshot_name):
         try:
@@ -90,9 +92,11 @@ class VolumeOperations(object):
         try:
             op = subprocess.check_output(['openstack', 'volume', 'show', volume_name, '-f', 'json'])
             op = yaml.load(op)
+            print "\nDEBUG : RETURN FROM any_volume_status" % (op)
             return op
         except subprocess.CalledProcessError as e:
             print "\nTHERE IS NO VOLUME WITH THE NAME %s" % (volume_name)
+            print "\nDEBUG : ERROR RETURN CODE" % (e.returncode)
             return e.returncode
 
     def volumes_create(self):
