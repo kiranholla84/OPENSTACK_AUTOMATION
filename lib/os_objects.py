@@ -31,7 +31,7 @@ class VolumeOperations(object):
 
         return self.op_state
 
-    def async_task_wait_process_for_volume_snapshot(self, type_of_object , name_of_object, final_async_state):
+    def async_task_wait_process_for_volume_and_snapshot(self, type_of_object , name_of_object, final_async_state):
 
         # Get the initial volume or snapshot status
         self.op_state = self.volume_snapshot_status_call(type_of_object, name_of_object)
@@ -52,7 +52,7 @@ class VolumeOperations(object):
 
         return self.op_state
 
-    def async_task_delete_wait_process_for_volume_snapshot(self, type_of_object, name_of_object, final_async_state):
+    def async_task_delete_wait_process_for_volume_and_snapshot(self, type_of_object, name_of_object, final_async_state):
 
         self.type_of_object = type_of_object
         self.name_of_object = name_of_object
@@ -128,7 +128,7 @@ class VolumeOperations(object):
 
         # ACTION : MODULARIZE THIS ACROSS FOR ALL ASYNC ITEMS
         # non-bootable non-attached volume show
-        op = self.async_task_wait_process_volume_snapshot(self, "volume" , self.volume_name, self.available_string)
+        op = self.async_task_delete_wait_process_for_volume_and_snapshot(self, "volume" , self.volume_name, self.available_string)
 
         # ACTION : MODULARIZE THIS AS VOLUME CHECK /SERVER CREATION CHECK/VOLUME VALUES CHECK/ SERVER VALUES CHECK
         # check for creation of the volume
@@ -174,7 +174,7 @@ class VolumeOperations(object):
 
         # ACTION : MODULARIZE THIS ACROSS FOR ALL ASYNC ITEMS
         # non-bootable non-attached volume show
-        op = self.async_task_wait_process_volume_snapshot(self, "volume", op['name'], self.available_string)
+        op = self.async_task_delete_wait_process_for_volume_and_snapshot(self, "volume", op['name'], self.available_string)
 
         # ACTION : MODULARIZE THIS AS VOLUME CHECK /SERVER CREATION CHECK/VOLUME VALUES CHECK/ SERVER VALUES CHECK
         # check for creation of the volume
@@ -198,7 +198,7 @@ class VolumeOperations(object):
         op = subprocess.check_output(['openstack' , 'volume' , 'show', volume_name , '-f', 'json'])
         op = yaml.load(op)
 
-        op = self.async_task_wait_process_volume_snapshot(self, "volume", self.volume_name, self.available_string)
+        op = self.async_task_delete_wait_process_for_volume_and_snapshot(self, "volume", self.volume_name, self.available_string)
 
         print "NEW EXTENDED SIZE OF VOLUME %s IS %s" %(self.volume_name, op['size'])
 
