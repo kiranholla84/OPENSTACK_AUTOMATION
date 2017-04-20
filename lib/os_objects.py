@@ -19,7 +19,7 @@ class VolumeOperations(object):
         self.volume_name = volume_name
         self.available_string = 'available'
 
-    def volume_snapshot_status_call(self, type_of_object, name_of_object):
+    def volume_or_snapshot_status_call(self, type_of_object, name_of_object):
 
         self.type_of_object = type_of_object
         self.name_of_object = name_of_object
@@ -34,7 +34,7 @@ class VolumeOperations(object):
     def async_task_wait_process_for_volume_and_snapshot(self, type_of_object , name_of_object, final_async_state):
 
         # Get the initial volume or snapshot status
-        self.op_state = self.volume_snapshot_status_call(type_of_object, name_of_object)
+        self.op_state = self.volume_or_snapshot_status_call(type_of_object, name_of_object)
 
         # Now wait for the state of the volume or snapshot to change to "Available"
         while (self.op_state['status'] != final_async_state):
@@ -48,7 +48,7 @@ class VolumeOperations(object):
             time.sleep(10)
 
             # This is to get the latest status dynamically
-            self.op_state = self.volume_snapshot_status_call(type_of_object, name_of_object)
+            self.op_state = self.volume_or_snapshot_status_call(type_of_object, name_of_object)
 
         return self.op_state
 
@@ -58,19 +58,20 @@ class VolumeOperations(object):
         self.name_of_object = name_of_object
 
         # Get the initial volume or snapshot status
-        self.op_state = self.volume_snapshot_status_call(type_of_object, name_of_object)
+        self.op_state = self.volume_or_snapshot_status_call(type_of_object, name_of_object)
 
         # Now wait till the volume is getting deleted
         while (self.op_state['status'] == 'deleting'):
             time.sleep(5)
-            print "\nWAITING FOR VOLUME SNAPSHOT %s TO BE DELETED. CURRENTLY VOLUME STATE IS IN %s\n" % (
+            print "\nWAITING FOR VOLUME/SNAPSHOT %s TO BE DELETED. CURRENTLY VOLUME STATE IS IN %s\n" % (
                 self.op_state['name'], self.op_state['status'])
 
             # This is the get the latest status dynamically
-            self.op_snaps_vol_show = self.volume_snapshot_status_call(type_of_object, name_of_object)
+            self.op_snaps_vol_show = self.async_task_delete_wait_process_for_volume_and_snapshot(type_of_object, name_of_object)
 
             if self.op_snaps_vol_show == 1:
                 print "%s WITH NAME %s SUCCESSFULLY DELETED" % (type_of_object , name_of_object)
+                print "%sDEBUG: op_snaps_vol_show is %s" %self.op_snaps_vol_show
                 return 0
             else:
                 return 1
