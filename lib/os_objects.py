@@ -52,7 +52,7 @@ class VolumeOperations(object):
 
         return self.op_state
 
-    def async_task_delete_wait_process_for_volume_and_snapshot(self, type_of_object, name_of_object, final_async_state):
+    def async_task_delete_wait_process_for_volume_and_snapshot(self, type_of_object, name_of_object):
 
         self.type_of_object = type_of_object
         self.name_of_object = name_of_object
@@ -71,9 +71,9 @@ class VolumeOperations(object):
 
             if self.op_snaps_vol_show == 1:
                 print "%s WITH NAME %s SUCCESSFULLY DELETED" % (type_of_object , name_of_object)
-                return 1
-            else:
                 return 0
+            else:
+                return 1
 
     def any_snapshot_status(self,snapshot_name):
         try:
@@ -93,7 +93,6 @@ class VolumeOperations(object):
         except subprocess.CalledProcessError as e:
             print "\nTHERE IS NO VOLUME WITH THE NAME %s" % (volume_name)
             return e.returncode
-
 
     def volumes_create(self):
 
@@ -128,7 +127,7 @@ class VolumeOperations(object):
 
         # ACTION : MODULARIZE THIS ACROSS FOR ALL ASYNC ITEMS
         # non-bootable non-attached volume show
-        op = self.async_task_delete_wait_process_for_volume_and_snapshot(self, "volume" , self.volume_name, self.available_string)
+        op = self.async_task_wait_process_for_volume_and_snapshot(self, "volume" , self.volume_name, self.available_string)
 
         # ACTION : MODULARIZE THIS AS VOLUME CHECK /SERVER CREATION CHECK/VOLUME VALUES CHECK/ SERVER VALUES CHECK
         # check for creation of the volume
@@ -174,7 +173,7 @@ class VolumeOperations(object):
 
         # ACTION : MODULARIZE THIS ACROSS FOR ALL ASYNC ITEMS
         # non-bootable non-attached volume show
-        op = self.async_task_delete_wait_process_for_volume_and_snapshot(self, "volume", op['name'], self.available_string)
+        op = self.async_task_wait_process_for_volume_and_snapshot(self, "volume", op['name'], self.available_string)
 
         # ACTION : MODULARIZE THIS AS VOLUME CHECK /SERVER CREATION CHECK/VOLUME VALUES CHECK/ SERVER VALUES CHECK
         # check for creation of the volume
@@ -198,7 +197,7 @@ class VolumeOperations(object):
         op = subprocess.check_output(['openstack' , 'volume' , 'show', volume_name , '-f', 'json'])
         op = yaml.load(op)
 
-        op = self.async_task_delete_wait_process_for_volume_and_snapshot(self, "volume", self.volume_name, self.available_string)
+        op = self.async_task_wait_process_for_volume_and_snapshot(self, "volume", self.volume_name, self.available_string)
 
         print "NEW EXTENDED SIZE OF VOLUME %s IS %s" %(self.volume_name, op['size'])
 
@@ -277,23 +276,19 @@ class VolumeOperations(object):
 
     def volume_delete(self,volume_name):
 
-        print "\n================DELETION OF NON-BOOTABLE VOLUME================\n"
+        print "\n================DELETION OF VOLUME================\n"
         o_chdir = os.chdir("/opt/stack/devstack")
         list_checkOutput_delete = ['openstack' ,'volume' ,'delete' ,  volume_name]
         op = subprocess.check_output(list_checkOutput_delete)
 
-        op_status = self.any_volume_status()
+        op_status = async_task_delete_wait_process_for_volume_and_snapshot("volume", volume_name)
 
         # Enter only if the volume exists
-        if op_status != 1:
-            while (op_status['status'] == 'deleting'):
-                print "\nWAITING FOR VOLUME %s TO BE DELETED. CURRENTLY VOLUME STATE IS IN %s\n" % (op_status['name'], op_status['status'])
-                time.sleep(10)
-                op_status = self.any_volume_status()
-                if op_status == 1:
-                    break
-                    print "CURRENT STATUS OF VOLUME IS" , op_status , "HENCE CONTINUING"
-
+        if op_status == 0:
+            print "\nVOLUME %s SUCCESSFULLY DELETED" %volume_name
+        else:
+            print "\nVOLUME %s COULD NOT BE DELETED" %volume_name
+            return 1
 
 class InstanceOperations(object):
     def __init__(self, server_name, image_name, flavour, **kwargs):
