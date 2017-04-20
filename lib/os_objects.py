@@ -290,6 +290,7 @@ class VolumeOperations(object):
         # Enter only if the volume exists
         if op_status == 0:
             print "\nVOLUME %s SUCCESSFULLY DELETED" %volume_name
+            return 2
         else:
             print "\nVOLUME %s COULD NOT BE DELETED" %volume_name
             return 1
