@@ -74,7 +74,8 @@ class VolumeOperations(object):
                 print "%s WITH NAME %s SUCCESSFULLY DELETED" % (type_of_object , name_of_object)
                 return 0
             else:
-                return 1
+                print "DEBUG:op_state IS " %(self.op_state)
+                pass
 
     def any_snapshot_status(self,snapshot_name):
         try:
