@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="d904190e-76ab-4a94-bf95-c8c65c729177" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/scripts/Sanity_all_tests_will_be_useful_for_testing_code_quickly.py" afterPath="$PROJECT_DIR$/scripts/Sanity_all_tests_will_be_useful_for_testing_code_quickly.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lib/os_objects.py" afterPath="$PROJECT_DIR$/lib/os_objects.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -17,11 +17,11 @@
   <component name="ExecutionTargetManager" SELECTED_TARGET="default_target" />
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="os_objects.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="os_objects.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/lib/os_objects.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2878">
-              <caret line="449" column="0" lean-forward="true" selection-start-line="449" selection-start-column="0" selection-end-line="449" selection-end-column="0" />
+            <state relative-caret-position="204">
+              <caret line="33" column="55" lean-forward="false" selection-start-line="33" selection-start-column="8" selection-end-line="33" selection-end-column="55" />
               <folding>
                 <element signature="e#0#17#0" expanded="true" />
               </folding>
@@ -29,7 +29,7 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Sanity_all_tests_will_be_useful_for_testing_code_quickly.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="Sanity_all_tests_will_be_useful_for_testing_code_quickly.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/scripts/Sanity_all_tests_will_be_useful_for_testing_code_quickly.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="438">
@@ -120,9 +120,9 @@
       <find>async</find>
       <find>deleting</find>
       <find>async_task_wait_process_volume_snapshot</find>
-      <find>async_task_wait_process_for_volume_and_snapshot</find>
       <find>volume_snapshot_check</find>
       <find>async_task_delete_wait_process_for_volume_and_snapshot</find>
+      <find>async_task_wait_process_for_volume_and_snapshot</find>
     </findStrings>
     <replaceStrings>
       <replace>any_volume_status</replace>
@@ -139,8 +139,8 @@
         <option value="$PROJECT_DIR$/scripts/replication_enabled_volume_extend.py" />
         <option value="$PROJECT_DIR$/scripts/volume_snapshots.py" />
         <option value="$PROJECT_DIR$/scripts/volume_create_from_source.py" />
-        <option value="$PROJECT_DIR$/lib/os_objects.py" />
         <option value="$PROJECT_DIR$/scripts/Sanity_all_tests_will_be_useful_for_testing_code_quickly.py" />
+        <option value="$PROJECT_DIR$/lib/os_objects.py" />
       </list>
     </option>
   </component>
@@ -801,20 +801,20 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/lib/os_objects.py">
+    <entry file="file://$PROJECT_DIR$/scripts/Sanity_all_tests_will_be_useful_for_testing_code_quickly.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2878">
-          <caret line="449" column="0" lean-forward="true" selection-start-line="449" selection-start-column="0" selection-end-line="449" selection-end-column="0" />
+        <state relative-caret-position="438">
+          <caret line="80" column="29" lean-forward="false" selection-start-line="80" selection-start-column="29" selection-end-line="80" selection-end-column="29" />
           <folding>
             <element signature="e#0#17#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/scripts/Sanity_all_tests_will_be_useful_for_testing_code_quickly.py">
+    <entry file="file://$PROJECT_DIR$/lib/os_objects.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="438">
-          <caret line="80" column="29" lean-forward="false" selection-start-line="80" selection-start-column="29" selection-end-line="80" selection-end-column="29" />
+        <state relative-caret-position="204">
+          <caret line="33" column="55" lean-forward="false" selection-start-line="33" selection-start-column="8" selection-end-line="33" selection-end-column="55" />
           <folding>
             <element signature="e#0#17#0" expanded="true" />
           </folding>
