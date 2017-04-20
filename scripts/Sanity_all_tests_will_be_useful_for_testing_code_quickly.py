@@ -24,7 +24,8 @@ server_available_string = 'ACTIVE'
 bootable_string = 'true'
 new_volume_size = size_vol +  10
 non_rep_vol_type = 'VMAX_SILVER'
-volume_name = 'qe_' + non_rep_vol_type + '_' + str(time.time()) # ACTION : Should be combination of testname, qe, volume,  timestamp of creation
+# volume_name = 'qe_' + non_rep_vol_type + '_' + str(time.time()) # ACTION : Should be combination of testname, qe, volume,  timestamp of creation
+volume_name = 'test_volume_qe'
 server_name =  'qe' + '_server_' + str(time.time())# ACTION : Should be combination of testname, qe, server, timestamp of creation
 number_of_snapshots = 1
 

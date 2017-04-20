@@ -281,7 +281,7 @@ class VolumeOperations(object):
         list_checkOutput_delete = ['openstack' ,'volume' ,'delete' ,  volume_name]
         op = subprocess.check_output(list_checkOutput_delete)
 
-        op_status = async_task_delete_wait_process_for_volume_and_snapshot("volume", volume_name)
+        op_status = self.async_task_delete_wait_process_for_volume_and_snapshot("volume", volume_name)
 
         # Enter only if the volume exists
         if op_status == 0:
