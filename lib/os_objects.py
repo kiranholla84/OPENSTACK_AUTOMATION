@@ -277,7 +277,7 @@ class VolumeOperations(object):
             # Do nothing as the above variable belongs to delete call
             pass
         else:
-            self.op_snaps_vol_show = async_task_wait_process_for_volume_and_snapshot("snapshot", snapshot_name, self.available_string):
+            op_snaps_vol_show = self.async_task_wait_process_for_volume_and_snapshot("snapshot", snapshot_name, self.available_string)
             while(self.op_snaps_vol_show['status'] != 'available'):
                 print "\nWAITING FOR VOLUME SNAPSHOT %s TO BE AVAILABLE. CURRENTLY VOLUME STATE IS IN %s\n" % (self.op_snaps_vol_show['name'], self.op_snaps_vol_show['status'])
                 time.sleep(10)
