@@ -32,7 +32,7 @@ class VolumeOperations(object):
         print "DEBUG: RETURNING FROM volume_or_snapshot_status_call %s" %(self.op_state)
         return self.op_state
 
-    def async_task_wait_process_for_volume_and_snapshot(self, type_of_object , name_of_object, final_async_state):
+    def async_task_wait_process_for_volume(self, type_of_object , name_of_object, final_async_state):
 
         # Get the initial volume or snapshot status
         self.op_state = self.volume_or_snapshot_status_call(type_of_object, name_of_object)
@@ -44,14 +44,27 @@ class VolumeOperations(object):
             if (self.op_state['status'].lower == 'error'):
                 print "\nFAILURE IN VOLUME/SNAPSHOT %s ASYNC OPERATION. EXITING" % name_of_object
                 break
-            print "\nWAITING FOR STATUS OF THE VOLUME/SNAPSHOT %s TO BE IN %s STATE..\nCURRENTLY VOLUME STATE IS IN %s STATE\n" % (
+            elif (self.op_state['status'].lower == 'deleting'):
+                print "\nWAITING FOR VOLUME/SNAPSHOT %s TO BE DELETED. CURRENTLY VOLUME STATE IS IN %s\n" % (self.op_state['name'], self.op_state['status'])
+            else:
+                print "\nWAITING FOR STATUS OF THE VOLUME/SNAPSHOT %s TO BE IN %s STATE..\nCURRENTLY VOLUME STATE IS IN %s STATE\n" % (
                 name_of_object, final_async_state, self.op_state['status'])
-            time.sleep(10)
+
+            time.sleep(5)
 
             # This is to get the latest status dynamically
             self.op_state = self.volume_or_snapshot_status_call(type_of_object, name_of_object)
 
-        return self.op_state
+            # This will be entered if delete volume is the async operation
+            if self.op_state == 1:
+                print "%s WITH NAME %s SUCCESSFULLY DELETED" % (type_of_object, name_of_object)
+                return 0
+            elif self.op_state['status'] == final_async_state:
+                print "\nSTATUS OF THE %s %s IS IN %s STATE..\n" % (type_of_object, name_of_object, self.op_state['status'])
+                return self.op_state
+            else:
+                pass
+
 
     def async_task_delete_wait_process_for_volume_and_snapshot(self, type_of_object, name_of_object):
 
@@ -211,6 +224,7 @@ class VolumeOperations(object):
 
         if values == inputs:
             print "\nVOLUME EXTENDED SUCCESSFULLY\n"
+            return 'EXTENDED'
         else:
             print "VALUES" ,values
             print "INPUTS", inputs
@@ -256,13 +270,14 @@ class VolumeOperations(object):
             if self.op_snaps_vol_show == 1:
                 print "op_snaps_vol_show IS", self.op_snaps_vol_show
                 print "SNAPSHOT %s OF VOLUME %s SUCCESSFULLY DELETED" %(snapshot_name, volume_status['name'])
-                break
 
-        # this will be entered when create is called
+
+        # else part will be entered when create is called
         if self.op_snaps_vol_show == 1:
             # Do nothing as the above variable belongs to delete call
             pass
         else:
+            self.op_snaps_vol_show = async_task_wait_process_for_volume_and_snapshot("snapshot", snapshot_name, self.available_string):
             while(self.op_snaps_vol_show['status'] != 'available'):
                 print "\nWAITING FOR VOLUME SNAPSHOT %s TO BE AVAILABLE. CURRENTLY VOLUME STATE IS IN %s\n" % (self.op_snaps_vol_show['name'], self.op_snaps_vol_show['status'])
                 time.sleep(10)
@@ -286,7 +301,7 @@ class VolumeOperations(object):
         list_checkOutput_delete = ['openstack' ,'volume' ,'delete' ,  volume_name]
         op = subprocess.check_output(list_checkOutput_delete)
 
-        op_status = self.async_task_delete_wait_process_for_volume_and_snapshot("volume", volume_name)
+        op_status = self.async_task_wait_process_for_volume("volume", volume_name, "NA")
 
         # Enter only if the volume exists
         if op_status == 0:
