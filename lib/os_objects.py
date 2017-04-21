@@ -131,7 +131,7 @@ class VolumeOperations(object):
 
         # ACTION : MODULARIZE THIS ACROSS FOR ALL ASYNC ITEMS
         # non-bootable non-attached volume show
-        op = self.async_task_wait_process_for_volume_and_snapshot("volume" , self.volume_name, self.available_string)
+        op = self.async_task_wait_process_for_volume_and_snapshot("volume", self.volume_name, self.available_string)
 
         # ACTION : MODULARIZE THIS AS VOLUME CHECK /SERVER CREATION CHECK/VOLUME VALUES CHECK/ SERVER VALUES CHECK
         # check for creation of the volume
@@ -143,7 +143,8 @@ class VolumeOperations(object):
         print "INPUTS", op['name'], op['size'], op['type'], op['status'] , op['bootable']
 
         if values == inputs:
-            print "\nVOLUME CREATED SUCCESSFULLY\n"
+            print "\nVOLUME EXTENDED SUCCESSFULLY\n"
+            return 'TEST'
 
     def volumes_clone(self, type_of_source , input_snap_or_clone_source , name_of_target):
 

@@ -35,7 +35,8 @@ os_objects_handle_volume = VolumeOperations("nonBootable", "nonReplicated", 2 , 
 non_bootable_volume_list = os_objects_handle_volume.volumes_create()
 #
 # # EXTEND VOLUME
-# print "\nMAIN SCRIPT : VOLUME EXTEND...",os_objects_handle_volume.volume_extend(volume_name, new_volume_size)
+extend_val = os_objects_handle_volume.volume_extend(volume_name, new_volume_size)
+print "\nMAIN SCRIPT : VOLUME EXTEND...%s" %(extend_val)
 #
 # # SNAPSHOT CREATION OF UNATTACHED VOLUME
 # print "\nMAIN SCRIPT : SNAPSHOT CREATE..."

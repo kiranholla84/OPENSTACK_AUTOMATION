@@ -22,8 +22,8 @@
       <file leaf-file-name="os_objects.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/lib/os_objects.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="391">
-              <caret line="292" column="12" lean-forward="true" selection-start-line="292" selection-start-column="12" selection-end-line="292" selection-end-column="12" />
+            <state relative-caret-position="323">
+              <caret line="146" column="25" lean-forward="false" selection-start-line="146" selection-start-column="25" selection-end-line="146" selection-end-column="25" />
               <folding>
                 <element signature="e#0#17#0" expanded="true" />
               </folding>
@@ -34,8 +34,8 @@
       <file leaf-file-name="Sanity_all_tests_will_be_useful_for_testing_code_quickly.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/scripts/Sanity_all_tests_will_be_useful_for_testing_code_quickly.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="459">
-              <caret line="81" column="14" lean-forward="false" selection-start-line="81" selection-start-column="14" selection-end-line="81" selection-end-column="14" />
+            <state relative-caret-position="-105">
+              <caret line="38" column="56" lean-forward="false" selection-start-line="38" selection-start-column="56" selection-end-line="38" selection-end-column="56" />
               <folding>
                 <element signature="e#0#17#0" expanded="true" />
               </folding>
@@ -95,7 +95,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>snapshot_chec</find>
       <find>latest_volume_sn</find>
       <find>try</find>
       <find>latest_vol</find>
@@ -117,7 +116,6 @@
       <find>deleting</find>
       <find>async_task_wait_process_volume_snapshot</find>
       <find>volume_snapshot_check</find>
-      <find>async_task_wait_process_for_volume_and_snapshot</find>
       <find>volume_snapshot_status_call</find>
       <find>any_volume_status</find>
       <find>def volume_or_snapshot_status_call</find>
@@ -125,6 +123,8 @@
       <find>volume_or_snapshot_status_call</find>
       <find>volume_de</find>
       <find>async_task_delete_wait_process_for_volume_and_snapshot</find>
+      <find>volume_extend</find>
+      <find>async_task_wait_process_for_volume_and_snapshot</find>
     </findStrings>
     <replaceStrings>
       <replace>any_volume_status</replace>
@@ -149,8 +149,8 @@
   </component>
   <component name="ProjectFrameBounds">
     <option name="x" value="-2" />
-    <option name="y" value="-51" />
-    <option name="width" value="1296" />
+    <option name="y" value="-2" />
+    <option name="width" value="1292" />
     <option name="height" value="780" />
   </component>
   <component name="ProjectView">
@@ -363,7 +363,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-2" y="-51" width="1296" height="780" extended-state="0" />
+    <frame x="-2" y="-2" width="1292" height="780" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
@@ -806,8 +806,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/lib/os_objects.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="391">
-          <caret line="292" column="12" lean-forward="true" selection-start-line="292" selection-start-column="12" selection-end-line="292" selection-end-column="12" />
+        <state relative-caret-position="323">
+          <caret line="146" column="25" lean-forward="false" selection-start-line="146" selection-start-column="25" selection-end-line="146" selection-end-column="25" />
           <folding>
             <element signature="e#0#17#0" expanded="true" />
           </folding>
@@ -816,8 +816,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/scripts/Sanity_all_tests_will_be_useful_for_testing_code_quickly.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="459">
-          <caret line="81" column="14" lean-forward="false" selection-start-line="81" selection-start-column="14" selection-end-line="81" selection-end-column="14" />
+        <state relative-caret-position="-105">
+          <caret line="38" column="56" lean-forward="false" selection-start-line="38" selection-start-column="56" selection-end-line="38" selection-end-column="56" />
           <folding>
             <element signature="e#0#17#0" expanded="true" />
           </folding>
