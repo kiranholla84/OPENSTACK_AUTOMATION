@@ -65,7 +65,6 @@ class VolumeOperations(object):
             else:
                 pass
 
-
     def async_task_delete_wait_process_for_volume_and_snapshot(self, type_of_object, name_of_object):
 
         self.type_of_object = type_of_object
@@ -144,7 +143,7 @@ class VolumeOperations(object):
 
         # ACTION : MODULARIZE THIS ACROSS FOR ALL ASYNC ITEMS
         # non-bootable non-attached volume show
-        op = self.async_task_wait_process_for_volume_and_snapshot("volume", self.volume_name, self.available_string)
+        op = self.async_task_wait_process_for_volume("volume", self.volume_name, self.available_string)
 
         # ACTION : MODULARIZE THIS AS VOLUME CHECK /SERVER CREATION CHECK/VOLUME VALUES CHECK/ SERVER VALUES CHECK
         # check for creation of the volume
@@ -191,7 +190,7 @@ class VolumeOperations(object):
 
         # ACTION : MODULARIZE THIS ACROSS FOR ALL ASYNC ITEMS
         # non-bootable non-attached volume show
-        op = self.async_task_wait_process_for_volume_and_snapshot("volume", op['name'], self.available_string)
+        op = self.async_task_wait_process_for_volume("volume", op['name'], self.available_string)
 
         # ACTION : MODULARIZE THIS AS VOLUME CHECK /SERVER CREATION CHECK/VOLUME VALUES CHECK/ SERVER VALUES CHECK
         # check for creation of the volume
@@ -215,7 +214,7 @@ class VolumeOperations(object):
         op = subprocess.check_output(['openstack' , 'volume' , 'show', volume_name , '-f', 'json'])
         op = yaml.load(op)
 
-        op = self.async_task_wait_process_for_volume_and_snapshot("volume", self.volume_name, self.available_string)
+        op = self.async_task_wait_process_for_volume("volume", self.volume_name, self.available_string)
 
         print "NEW EXTENDED SIZE OF VOLUME %s IS %s" %(self.volume_name, op['size'])
 
@@ -277,7 +276,7 @@ class VolumeOperations(object):
             # Do nothing as the above variable belongs to delete call
             pass
         else:
-            op_snaps_vol_show = self.async_task_wait_process_for_volume_and_snapshot("snapshot", snapshot_name, self.available_string)
+            op_snaps_vol_show = self.async_task_wait_process_for_volume("snapshot", snapshot_name, self.available_string)
             while(self.op_snaps_vol_show['status'] != 'available'):
                 print "\nWAITING FOR VOLUME SNAPSHOT %s TO BE AVAILABLE. CURRENTLY VOLUME STATE IS IN %s\n" % (self.op_snaps_vol_show['name'], self.op_snaps_vol_show['status'])
                 time.sleep(10)
