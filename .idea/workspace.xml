@@ -20,8 +20,8 @@
       <file leaf-file-name="os_objects.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/lib/os_objects.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="17">
-              <caret line="168" column="90" lean-forward="false" selection-start-line="168" selection-start-column="90" selection-end-line="168" selection-end-column="90" />
+            <state relative-caret-position="204">
+              <caret line="90" column="24" lean-forward="false" selection-start-line="90" selection-start-column="12" selection-end-line="90" selection-end-column="24" />
               <folding>
                 <element signature="e#0#17#0" expanded="true" />
               </folding>
@@ -93,8 +93,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>volume_DE</find>
-      <find>any_vo</find>
       <find>latest_volume_snapshot_status</find>
       <find>creating</find>
       <find>volume_attac</find>
@@ -123,6 +121,8 @@
       <find>self.</find>
       <find>def async_task_wait_process_for_volume</find>
       <find>extend</find>
+      <find>bootable_st</find>
+      <find>bootable_str</find>
     </findStrings>
     <replaceStrings>
       <replace>any_volume_status</replace>
@@ -148,7 +148,7 @@
   </component>
   <component name="ProjectFrameBounds">
     <option name="x" value="-2" />
-    <option name="y" value="-2" />
+    <option name="y" value="-51" />
     <option name="width" value="1292" />
     <option name="height" value="780" />
   </component>
@@ -362,7 +362,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-2" y="-2" width="1292" height="780" extended-state="0" />
+    <frame x="-2" y="-51" width="1292" height="780" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
@@ -815,8 +815,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/lib/os_objects.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="17">
-          <caret line="168" column="90" lean-forward="false" selection-start-line="168" selection-start-column="90" selection-end-line="168" selection-end-column="90" />
+        <state relative-caret-position="204">
+          <caret line="90" column="24" lean-forward="false" selection-start-line="90" selection-start-column="12" selection-end-line="90" selection-end-column="24" />
           <folding>
             <element signature="e#0#17#0" expanded="true" />
           </folding>

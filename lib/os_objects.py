@@ -11,6 +11,8 @@ import yaml
 
 
 class VolumeOperations(object):
+    bootable_true_string = 'true'
+    bootable_false_string = 'false'
     def __init__(self, bootable_factor, replication_factor, size_vol, type_vol, volume_name, **kwargs):
         self.bootable_factor = bootable_factor
         self.replication_factor = replication_factor
@@ -86,7 +88,7 @@ class VolumeOperations(object):
         # ACTION :Modularize : Below should be modularized
         if (self.bootable_factor == "bootable"):
             print "\n================CREATING BOOTABLE VOLUME ================\n"
-            bootable_string = 'true'
+            bootable_string = VolumeOperations.bootable_true_string
 
             # Get the OS image dynamically
             os_image = self.dynamic_image_get()
@@ -95,7 +97,7 @@ class VolumeOperations(object):
             list_checkOutput = ['openstack', 'volume', 'create', '--image', os_image, '--type',
                                 self.type_vol, '--size', str(self.size_vol), self.volume_name, '-f', 'json']
         else:
-            bootable_string = 'false'
+            bootable_string = VolumeOperations.bootable_false_string
             print "\n================CREATING NON-BOOTABLE VOLUME ================\n"
             list_checkOutput = ['openstack', 'volume', 'create', '--size', str(self.size_vol), '--type', self.type_vol,
                                 self.volume_name, '-f', 'json']
@@ -118,7 +120,7 @@ class VolumeOperations(object):
     def volume_check(self, op):
 
         # create
-        inputs = [self.volume_name, self.size_vol, self.type_vol, self.available_string, bootable_string]
+        inputs = [self.volume_name, self.size_vol, self.type_vol, self.available_string, VolumeOperations.bootable_string]
         values = [(op['name']), op['size'], op['type'], op['status'], op['bootable']]
 
         # Clone
@@ -130,7 +132,7 @@ class VolumeOperations(object):
             return 0
         else:
             print "\nVOLUME CHECK FAILED\n"
-            print "DEBUG: VALUES", self.volume_name, self.size_vol, self.type_vol, self.available_string, bootable_string
+            print "DEBUG: VALUES", self.volume_name, self.size_vol, self.type_vol, self.available_string, VolumeOperations.bootable_string
             print "DEBUG: INPUTS", op['name'], op['size'], op['type'], op['status'], op['bootable']
             return 1
 
