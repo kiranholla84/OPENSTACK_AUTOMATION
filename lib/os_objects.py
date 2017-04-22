@@ -88,7 +88,7 @@ class VolumeOperations(object):
         # ACTION :Modularize : Below should be modularized
         if (self.bootable_factor == "bootable"):
             print "\n================CREATING BOOTABLE VOLUME ================\n"
-            bootable_string = VolumeOperations.bootable_true_string
+            VolumeOperations.bootable_string = VolumeOperations.bootable_true_string
 
             # Get the OS image dynamically from CLI
             os_image = self.dynamic_image_get()
@@ -97,7 +97,7 @@ class VolumeOperations(object):
             list_checkOutput = ['openstack', 'volume', 'create', '--image', os_image, '--type',
                                 self.type_vol, '--size', str(self.size_vol), self.volume_name, '-f', 'json']
         else:
-            bootable_string = VolumeOperations.bootable_false_string
+            VolumeOperations.bootable_string = VolumeOperations.bootable_false_string
             print "\n================CREATING NON-BOOTABLE VOLUME ================\n"
             list_checkOutput = ['openstack', 'volume', 'create', '--size', str(self.size_vol), '--type', self.type_vol,
                                 self.volume_name, '-f', 'json']
