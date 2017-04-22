@@ -24,13 +24,21 @@ class VolumeOperations(object):
         self.type_of_object = type_of_object
         self.name_of_object = name_of_object
 
-        if self.type_of_object == "volume":
-            self.op_state = self.any_volume_status(name_of_object)
-        elif self.type_of_object == "snapshot":
-            self.op_state = self.any_snapshot_status(name_of_object)
+        try:
+            if self.type_of_object == "volume":
+                op = subprocess.check_output(['openstack', 'volume', 'show', self.name_of_object, '-f', 'json'])
+            elif self.type_of_object == "snapshot":
+                op = subprocess.check_output(['openstack', 'volume', 'snapshot', 'show', self.name_of_object, '-f', 'json'])
+            else:
+                print "INVALID OBJECT TYPE, EXITING"
 
-        print "DEBUG: RETURNING FROM volume_or_snapshot_status_call %s" %(self.op_state)
-        return self.op_state
+            self.op = yaml.load(op)
+            return self.op
+
+        except subprocess.CalledProcessError as e:
+            print "\nTHERE IS NO %s WITH THE NAME %s" % (self.type_of_object, self.name_of_object)
+            print "\nERROR CODE", e.returncode
+            return e.returncode
 
     def async_task_wait_process_for_volume(self, type_of_object , name_of_object, final_async_state):
 
@@ -65,72 +73,26 @@ class VolumeOperations(object):
             else:
                 pass
 
-    def async_task_delete_wait_process_for_volume_and_snapshot(self, type_of_object, name_of_object):
+    def dynamic_image_get(self):
 
-        self.type_of_object = type_of_object
-        self.name_of_object = name_of_object
-
-        # Get the initial volume or snapshot status
-        self.op_state = self.volume_or_snapshot_status_call(type_of_object, name_of_object)
-
-        # Now wait till the volume is getting deleted
-        while (self.op_state['status'] == 'deleting'):
-            time.sleep(5)
-            print "\nWAITING FOR VOLUME/SNAPSHOT %s TO BE DELETED. CURRENTLY VOLUME STATE IS IN %s\n" % (
-                self.op_state['name'], self.op_state['status'])
-
-            # This is the get the latest status dynamically
-            self.op_state = self.volume_or_snapshot_status_call(type_of_object, name_of_object)
-
-            if self.op_state == 1:
-                print "%s WITH NAME %s SUCCESSFULLY DELETED" % (type_of_object , name_of_object)
-                return 0
-            else:
-                print "DEBUG:op_state IS " %(self.op_state)
-                pass
-
-    def any_snapshot_status(self,snapshot_name):
-        try:
-            op = subprocess.check_output(['openstack', 'volume', 'snapshot' ,'show', snapshot_name, '-f', 'json'])
-            op = yaml.load(op)
-            return op
-        except subprocess.CalledProcessError as e:
-            print "\nTHERE IS NO SNAPSHOT WITH THE NAME %s" % (snapshot_name)
-            print "\nERROR CODE" , e.returncode
-            return e.returncode
-
-    def any_volume_status(self, volume_name):
-        try:
-            op = subprocess.check_output(['openstack', 'volume', 'show', volume_name, '-f', 'json'])
-            op = yaml.load(op)
-            print "\nDEBUG : RETURN FROM any_volume_status" % (op)
-            return op
-        except subprocess.CalledProcessError as e:
-            print "\nTHERE IS NO VOLUME WITH THE NAME %s" % (volume_name)
-            print "\nDEBUG : ERROR RETURN CODE %s" % (e.returncode)
-            return e.returncode
+        # Get the first image dynamically
+        list_check_output = ['openstack', 'image', 'list', '-f', 'json']
+        op_image_list = subprocess.check_output(list_check_output)
+        op_image_list = yaml.load(op_image_list)
+        return op_image_list[0]['Name']
 
     def volumes_create(self):
-
-        # ACTION : Remove the full block below
-        print "Requested stuff are %s %s %s %s %s " % (
-        self.bootable_factor, self.replication_factor, self.size_vol, self.type_vol, self.volume_name)
-        os.chdir("/opt/stack/devstack")
-        print "Debug : CWD", os.getcwd()
-        # auth_perm = ['source', 'openrc', 'admin', 'admin']
-        # op_auth_perm = subprocess.check_output(auth_perm)
 
         # ACTION :Modularize : Below should be modularized
         if (self.bootable_factor == "bootable"):
             print "\n================CREATING BOOTABLE VOLUME ================\n"
             bootable_string = 'true'
 
-            # Get the images dynamically
-            list_check_output = ['openstack', 'image', 'list', '-f', 'json']
-            op_image_list = subprocess.check_output(list_check_output)
-            op_image_list = yaml.load(op_image_list)
-            print "\n==>IMAGE WHICH WILL BE USED FOR BOOTABLE VOLUME CREATION IS", op_image_list[0]['Name'], "...\n"
-            list_checkOutput = ['openstack', 'volume', 'create', '--image', op_image_list[0]['Name'], '--type',
+            # Get the OS image dynamically
+            os_image = self.dynamic_image_get()
+            print "\n==>IMAGE WHICH WILL BE USED FOR BOOTABLE VOLUME CREATION IS", os_image, "...\n"
+
+            list_checkOutput = ['openstack', 'volume', 'create', '--image', os_image, '--type',
                                 self.type_vol, '--size', str(self.size_vol), self.volume_name, '-f', 'json']
         else:
             bootable_string = 'false'
@@ -138,95 +100,99 @@ class VolumeOperations(object):
             list_checkOutput = ['openstack', 'volume', 'create', '--size', str(self.size_vol), '--type', self.type_vol,
                                 self.volume_name, '-f', 'json']
 
+        # Execute the Openstack CLI Command
         op = subprocess.check_output(list_checkOutput)
         op = loads(op)
 
-        # ACTION : MODULARIZE THIS ACROSS FOR ALL ASYNC ITEMS
-        # non-bootable non-attached volume show
+        # Wait for the volume creation to complete as it is async task
         op = self.async_task_wait_process_for_volume("volume", self.volume_name, self.available_string)
 
-        # ACTION : MODULARIZE THIS AS VOLUME CHECK /SERVER CREATION CHECK/VOLUME VALUES CHECK/ SERVER VALUES CHECK
-        # check for creation of the volume
+        # Check for the volume creation
+        self.comparison_check_parameter = self.volume_check(self.op)
+        if self.comparison_check_parameter == 0:
+            print "VOLUME SUCCESSFULLY CREATED"
+        else:
+            print "VOLUME NOT CREATED"
 
-        inputs = [self.volume_name, self.size_vol, self.type_vol, self.available_string , bootable_string]
+
+    def volume_check(self, op):
+
+        # create
+        inputs = [self.volume_name, self.size_vol, self.type_vol, self.available_string, bootable_string]
         values = [(op['name']), op['size'], op['type'], op['status'], op['bootable']]
 
-        print "VALUES", self.volume_name, self.size_vol, self.type_vol, self.available_string , bootable_string
-        print "INPUTS", op['name'], op['size'], op['type'], op['status'] , op['bootable']
+        # Clone
+        inputs = [self.name_of_target, self.source_status['size'], self.type_vol, self.available_string]
+        values = [(op['name']), op['size'], op['type'], op['status']]
 
         if values == inputs:
-            print "\nVOLUME EXTENDED SUCCESSFULLY\n"
-            return 'TEST'
+            print "\nVOLUME CHECKED SUCCESSFULLY\n"
+            return 0
+        else:
+            print "\nVOLUME CHECK FAILED\n"
+            print "DEBUG: VALUES", self.volume_name, self.size_vol, self.type_vol, self.available_string, bootable_string
+            print "DEBUG: INPUTS", op['name'], op['size'], op['type'], op['status'], op['bootable']
+            return 1
 
     def volumes_clone(self, type_of_source , input_snap_or_clone_source , name_of_target):
 
+        self.type_of_source = type_of_source
         self.input_source = input_snap_or_clone_source
-        # ACTION : Remove the full block below
-        print "Requested stuff are %s %s %s %s %s " % (
-            self.bootable_factor, self.replication_factor, self.size_vol, self.type_vol, self.volume_name)
-        os.chdir("/opt/stack/devstack")
-        print "Debug : CWD", os.getcwd()
-        # auth_perm = ['source', 'openrc', 'admin', 'admin']
-        # op_auth_perm = subprocess.check_output(auth_perm)
+        self.name_of_target = name_of_target
 
-        # ACTION :Modularize : Below should be modularized
-        if (type_of_source == "snapshot"):
+        if (self.type_of_source == "snapshot"):
             print "\n================CREATING VOLUME FROM SNAPSHOT AS THE SOURCE================\n"
 
             list_checkOutput = ['openstack', 'volume', 'create', '--snapshot', self.input_source, '--type',
                                 self.type_vol, name_of_target, '-f', 'json']
 
-            source_status = self.any_snapshot_status()
+            self.source_status = self.any_snapshot_status()
 
         else:
             print "\n================CREATING VOLUME FROM ANOTHER VOLUME AS THE SOURCE ================\n"
             list_checkOutput = ['openstack', 'volume', 'create', '--source', self.input_source, '--type', self.type_vol,
                                 name_of_target, '-f', 'json']
-            source_status = self.any_volume_status(self.input_source)
+            self.source_status = self.any_volume_status(self.input_source)
 
-
+        # Execute the Openstack CLI Command
         op = subprocess.check_output(list_checkOutput)
         op = loads(op)
 
-        # ACTION : MODULARIZE THIS ACROSS FOR ALL ASYNC ITEMS
-        # non-bootable non-attached volume show
+        # WAIT FOR ASYNC OPERATION TO COMPLETE
         op = self.async_task_wait_process_for_volume("volume", op['name'], self.available_string)
 
-        # ACTION : MODULARIZE THIS AS VOLUME CHECK /SERVER CREATION CHECK/VOLUME VALUES CHECK/ SERVER VALUES CHECK
-        # check for creation of the volume
-        inputs = [name_of_target, source_status['size'], self.type_vol, self.available_string]
-        values = [(op['name']), op['size'], op['type'], op['status']]
-
-        print "VALUES", values
-        print "INPUTS", inputs
-
-        if values == inputs:
-            print "\nVOLUME CREATED SUCCESSFULLY FROM SOURCE\n"
+        # Check for the volume creation
+        self.comparison_check_parameter = self.volume_check(self.op)
+        if self.comparison_check_parameter == 0:
+            print "\n%s %s SUCCESSFULLY CLONED TO NEW VOLUME %s" %(self.type_of_source, self.input_source ,self.name_of_target)
+        else:
+            print "\n%s %s VOLUME %s NOT CLONED" %(self.type_of_source, self.input_source
 
     def volume_extend(self, volume_name, new_volume_size):
 
+        self.new_volume_size = new_volume_size
+        self.volume_name = volume_name
+
         # print "\n================VOLUME EXTEND================\n"
         print "New size is" , new_volume_size
-        list_check_output = ['openstack' , 'volume' , 'set' , '--size' , str(new_volume_size), self.volume_name]
-        op_extend_vol = subprocess.check_output(list_check_output)
+        list_check_output = ['openstack' , 'volume' , 'set' , '--size' , str(self.new_volume_size), self.volume_name]
+        self.op = subprocess.check_output(list_check_output)
+        self.op = loads(self.op)
 
-        ## check for extension of volume
-        op = subprocess.check_output(['openstack' , 'volume' , 'show', volume_name , '-f', 'json'])
-        op = yaml.load(op)
+        # ## check for extension of volume
+        # op = subprocess.check_output(['openstack' , 'volume' , 'show', self.volume_name , '-f', 'json'])
+        # op = yaml.load(op)
 
         op = self.async_task_wait_process_for_volume("volume", self.volume_name, self.available_string)
 
-        print "NEW EXTENDED SIZE OF VOLUME %s IS %s" %(self.volume_name, op['size'])
+        print "NEW EXTENDED SIZE OF VOLUME %s IS %s" %(self.op['name'], self.op['size'])
 
-        inputs = [self.volume_name, new_volume_size , self.type_vol, self.available_string]
-        values = [(op['name']), op['size'], op['type'], op['status']]
-
-        if values == inputs:
-            print "\nVOLUME EXTENDED SUCCESSFULLY\n"
-            return 'EXTENDED'
+        # Check for the volume creation
+        self.comparison_check_parameter = self.volume_check(self.op)
+        if self.comparison_check_parameter == 0:
+            print "VOLUME %s SUCCESSFULLY EXTENDED TO NEW SIZE %s" %(op['name'], op['size'])
         else:
-            print "VALUES" ,values
-            print "INPUTS", inputs
+            print "VOLUME %s NOT EXTENDED" %(op['name'])
 
     def volume_snapshot_create(self,volume_name,number_of_snapshots):
 
