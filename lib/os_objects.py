@@ -166,7 +166,7 @@ class VolumeOperations(object):
         if self.comparison_check_parameter == 0:
             print "\n%s %s SUCCESSFULLY CLONED TO NEW VOLUME %s" %(self.type_of_source, self.input_source ,self.name_of_target)
         else:
-            print "\n%s %s VOLUME %s NOT CLONED" %(self.type_of_source, self.input_source
+            print "\n%s %s VOLUME %s NOT CLONED" %(self.type_of_source, self.input_source)
 
     def volume_extend(self, volume_name, new_volume_size):
 
