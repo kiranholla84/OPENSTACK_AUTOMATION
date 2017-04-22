@@ -170,6 +170,7 @@ class VolumeOperations(object):
 
         # Execute the Openstack CLI Command
         op = subprocess.check_output(list_checkOutput)
+
         op = loads(op)
 
         # WAIT FOR ASYNC OPERATION TO COMPLETE
