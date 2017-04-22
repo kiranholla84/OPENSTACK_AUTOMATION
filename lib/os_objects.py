@@ -90,7 +90,7 @@ class VolumeOperations(object):
             print "\n================CREATING BOOTABLE VOLUME ================\n"
             bootable_string = VolumeOperations.bootable_true_string
 
-            # Get the OS image dynamically
+            # Get the OS image dynamically from CLI
             os_image = self.dynamic_image_get()
             print "\n==>IMAGE WHICH WILL BE USED FOR BOOTABLE VOLUME CREATION IS", os_image, "...\n"
 
