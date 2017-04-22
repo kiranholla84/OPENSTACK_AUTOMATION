@@ -29,10 +29,10 @@ volume_name = 'test_volume_qe_1'
 server_name =  'qe' + '_server_' + str(time.time())# ACTION : Should be combination of testname, qe, server, timestamp of creation
 number_of_snapshots = 1
 
-# VOLUME CREATION
-print "\nMAIN SCRIPT : VOLUME CREATE..."
+# # VOLUME CREATION
+# print "\nMAIN SCRIPT : VOLUME CREATE..."
 os_objects_handle_volume = VolumeOperations("nonBootable", "nonReplicated", 2 , non_rep_vol_type, volume_name)
-non_bootable_volume_list = os_objects_handle_volume.volumes_create()
+# non_bootable_volume_list = os_objects_handle_volume.volumes_create()
 #
 # # EXTEND VOLUME
 extend_val = os_objects_handle_volume.volume_extend(volume_name, new_volume_size)
