@@ -146,6 +146,7 @@ class VolumeOperations(object):
         self.input_source = input_snap_or_clone_source
         self.name_of_target = name_of_target
 
+
         if (self.type_of_source == "snapshot"):
             print "\n================CREATING VOLUME FROM SNAPSHOT AS THE SOURCE================\n"
 
