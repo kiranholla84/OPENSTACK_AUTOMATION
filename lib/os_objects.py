@@ -110,24 +110,28 @@ class VolumeOperations(object):
         op = self.async_task_wait_process_for_volume("volume", self.volume_name, self.available_string)
 
         # Check for the volume creation
-        self.comparison_check_parameter = self.volume_check(self.op)
+        self.comparison_check_parameter = self.volume_check(self.op, 'create')
         if self.comparison_check_parameter == 0:
             print "VOLUME SUCCESSFULLY CREATED"
         else:
             print "VOLUME NOT CREATED"
 
 
-    def volume_check(self, op):
+    def volume_check(self, op , type_of_operation):
+
+        self.type_of_operation = type_of_operation
 
         # create
-        inputs = [self.volume_name, self.size_vol, self.type_vol, self.available_string, VolumeOperations.bootable_string]
-        values = [(op['name']), op['size'], op['type'], op['status'], op['bootable']]
+        if (self.type_of_operation == 'create'):
+            self.inputs = [self.volume_name, self.size_vol, self.type_vol, self.available_string, VolumeOperations.bootable_string]
+            self.values = [(op['name']), op['size'], op['type'], op['status'], op['bootable']]
 
         # Clone
-        inputs = [self.name_of_target, self.source_status['size'], self.type_vol, self.available_string]
-        values = [(op['name']), op['size'], op['type'], op['status']]
+        if (self.type_of_operation == 'clone'):
+            self.inputs = [self.name_of_target, self.source_status['size'], self.type_vol, self.available_string]
+            self.values = [(op['name']), op['size'], op['type'], op['status']]
 
-        if values == inputs:
+        if self.values == self.inputs:
             print "\nVOLUME CHECKED SUCCESSFULLY\n"
             return 0
         else:
