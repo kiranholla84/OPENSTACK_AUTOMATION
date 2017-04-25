@@ -25,22 +25,27 @@ bootable_string = 'true'
 new_volume_size = size_vol +  10
 non_rep_vol_type = 'VMAX_SILVER'
 # volume_name = 'qe_' + non_rep_vol_type + '_' + str(time.time()) # ACTION : Should be combination of testname, qe, volume,  timestamp of creation
-volume_name = 'test_volume_qe_1'
+volume_name_prefix = '4test_volume_qe_'
+
 server_name =  'qe' + '_server_' + str(time.time())# ACTION : Should be combination of testname, qe, server, timestamp of creation
 number_of_snapshots = 1
 
-# # VOLUME CREATION
+# Object instatiation [May be modularized]
+os_objects_handle_volume = VolumeOperations("nonBootable", "nonReplicated", 2 , non_rep_vol_type, volume_name_prefix, 4)
+# os_objects_handle_snapshots = SnapshotOperations(volume_list)
+# os_objects_handle_instance = InstanceOperations(volume_list)
+
+# MULTIPLE VOLUME CREATION
 print "\nMAIN SCRIPT : VOLUME CREATE..."
-os_objects_handle_volume = VolumeOperations("nonBootable", "nonReplicated", 2 , non_rep_vol_type, volume_name)
 non_bootable_volume_list = os_objects_handle_volume.volumes_create()
 #
 # # EXTEND VOLUME
-# extend_val = os_objects_handle_volume.volume_extend(volume_name, new_volume_size)
+# extend_val = os_objects_handle_volume.volume_extend(volume_list, new_volume_size)
 # print "\nMAIN SCRIPT : VOLUME EXTEND...%s" %(extend_val)
 #
 # # SNAPSHOT CREATION OF UNATTACHED VOLUME
-print "\nMAIN SCRIPT : SNAPSHOT CREATE..."
-snapshot_name = os_objects_handle_volume.volume_snapshot_create(volume_name, number_of_snapshots)
+# print "\nMAIN SCRIPT : SNAPSHOT CREATE..."
+# snapshot_name = os_objects_handle_volume.volume_snapshot_create(volume_list, number_of_snapshots)
 #
 # # INSTANCE CREATION
 # os_objects_handle_server = InstanceOperations(server_name,image,flavor)
@@ -78,9 +83,9 @@ snapshot_name = os_objects_handle_volume.volume_snapshot_create(volume_name, num
 # snapshot_delete = os_objects_handle_volume.volume_snapshot_delete(snapshot_name_2)
 
 # DELETE VOLUMES
-"\nMAIN SCRIPT : VOLUME DELETION"
-volume_delete = os_objects_handle_volume.volume_delete(volume_name)
-print "DEBUG: volume_delete is %s" %volume_delete
+# "\nMAIN SCRIPT : VOLUME DELETION"
+# volume_delete = os_objects_handle_volume.volume_delete(volume_name)
+# print "DEBUG: volume_delete is %s" %volume_delete
 # volume_delete = os_objects_handle_volume.volume_delete(volume_from_snapshot)
 # volume_delete = os_objects_handle_volume.volume_delete(volume_from_volume)
 

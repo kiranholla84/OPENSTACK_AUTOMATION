@@ -13,13 +13,14 @@ import yaml
 class VolumeOperations(object):
     bootable_true_string = 'true'
     bootable_false_string = 'false'
-    def __init__(self, bootable_factor, replication_factor, size_vol, type_vol, volume_name, **kwargs):
+    def __init__(self, bootable_factor, replication_factor, size_vol, type_vol, volume_name_prefix, number_of_volumes):
         self.bootable_factor = bootable_factor
         self.replication_factor = replication_factor
         self.size_vol = size_vol
         self.type_vol = type_vol
-        self.volume_name = volume_name
+        self.volume_name_prefix = volume_name_prefix
         self.available_string = 'available'
+        self.number_of_volumes = number_of_volumes
 
     def volume_or_snapshot_status_call(self, type_of_object, name_of_object):
 
@@ -86,63 +87,83 @@ class VolumeOperations(object):
     def volumes_create(self):
 
         # ACTION :Modularize : Below should be modularized
-        if (self.bootable_factor == "bootable"):
-            print "\n================CREATING BOOTABLE VOLUME ================\n"
-            VolumeOperations.bootable_string = VolumeOperations.bootable_true_string
+        self.list_checkOutput = dict()
+        self.op = []
+        self.volume_name = []
 
-            # Get the OS image dynamically from CLI
-            os_image = self.dynamic_image_get()
-            print "\n==>IMAGE WHICH WILL BE USED FOR BOOTABLE VOLUME CREATION IS", os_image, "...\n"
+        # Execute creation of all volumes in parallel. This is not a multi-threaded way of calling though
+        for volume_index in range(0, self.number_of_volumes - 1):
 
-            list_checkOutput = ['openstack', 'volume', 'create', '--image', os_image, '--type',
-                                self.type_vol, '--size', str(self.size_vol), self.volume_name, '-f', 'json']
-        else:
-            VolumeOperations.bootable_string = VolumeOperations.bootable_false_string
-            print "\n================CREATING NON-BOOTABLE VOLUME ================\n"
-            list_checkOutput = ['openstack', 'volume', 'create', '--size', str(self.size_vol), '--type', self.type_vol,
-                                self.volume_name, '-f', 'json']
+            self.volume_name.append((self.volume_name_prefix + str(volume_index)))
 
-        # Execute the Openstack CLI Command
-        op = subprocess.check_output(list_checkOutput)
-        op = loads(op)
+            if (self.bootable_factor == "bootable"):
+                print "\n================CREATING BOOTABLE VOLUME %s ================\n" %(self.volume_name[volume_index])
+                VolumeOperations.bootable_string = VolumeOperations.bootable_true_string
 
-        # Wait for the volume creation to complete as it is async task
-        op = self.async_task_wait_process_for_volume("volume", self.volume_name, self.available_string)
+                # Get the OS image dynamically from CLI
+                os_image = self.dynamic_image_get()
+                print "\n==>IMAGE WHICH WILL BE USED FOR BOOTABLE VOLUME CREATION IS", os_image, "...\n"
 
-        # Check for the volume creation
-        self.comparison_check_parameter = self.volume_check(self.op, 'create')
-        if self.comparison_check_parameter == 0:
-            print "VOLUME SUCCESSFULLY CREATED"
-        else:
-            print "VOLUME NOT CREATED"
+                self.list_checkOutput[volume_index] = ['openstack', 'volume', 'create', '--image', os_image, '--type',
+                                    self.type_vol, '--size', str(self.size_vol), self.volume_name[volume_index], '-f', 'json']
+            else:
+                VolumeOperations.bootable_string = VolumeOperations.bootable_false_string
+                print "\n================CREATING NON-BOOTABLE VOLUME %s ================\n" %(self.volume_name[volume_index])
+                self.list_checkOutput[volume_index]= ['openstack', 'volume', 'create', '--size', str(self.size_vol), '--type', self.type_vol,
+                                    self.volume_name[volume_index], '-f', 'json']
+
+            print "DEBUG:list_checkOutput for index %s is %s" %(volume_index, self.list_checkOutput[volume_index])
+
+            # Execute the Openstack CLI Command
+            self.temp = subprocess.check_output(self.list_checkOutput[volume_index])
+            self.temp2 = loads(self.temp)
+            self.op.append(self.temp2)
+
+            print "DEBUG:OP is %s for index %s" %(self.op[volume_index],volume_index)
+
+        # Run the async operation for all volumes in parallel
+        for volume_index in range(0, self.number_of_volumes - 1):
+            # Wait for the volume creation to complete as it is async task
+            self.op[volume_index] = self.async_task_wait_process_for_volume("volume", self.volume_name[volume_index], self.available_string)
+
+            print "DEBUG:VOLUME NOW IS %s" %(self.op[volume_index])
+
+            # Check for the volume creation
+            self.object_index_dict = {volume_index : self.op[volume_index]}
+            self.comparison_check_parameter = self.volume_check(self.object_index_dict, 'create')
+            if self.comparison_check_parameter == 0:
+                print "VOLUME %s SUCCESSFULLY CREATED" % (self.volume_name[volume_index])
+            else:
+                print "VOLUME NOT CREATED"
 
 
-    def volume_check(self, op, type_of_operation):
+    def volume_check(self, object_index_dict , type_of_operation):
 
         self.type_of_operation = type_of_operation
+        self.object_index_dict = object_index_dict
 
         # create
         if (self.type_of_operation == 'create'):
-            self.inputs = [self.volume_name, self.size_vol, self.type_vol, self.available_string, VolumeOperations.bootable_string]
-            self.values = [(op['name']), op['size'], op['type'], op['status'], op['bootable']]
+            self.inputs = [self.volume_name[object_index_dict.keys()[0]], self.size_vol, self.type_vol, self.available_string, VolumeOperations.bootable_string]
+            self.values = [(self.object_index_dict.values()[0])['name'], (self.object_index_dict.values()[0])['size'], (self.object_index_dict.values()[0])['type'], (self.object_index_dict.values()[0])['status'], (self.object_index_dict.values()[0])['bootable']]
 
         # Clone
         if (self.type_of_operation == 'clone'):
             self.inputs = [self.name_of_target, self.source_status['size'], self.type_vol, self.available_string]
-            self.values = [(op['name']), op['size'], op['type'], op['status']]
+            self.values = [(object_value['name']), object_value['size'], object_value['type'], object_value['status']]
 
         # Extend
         if (self.type_of_operation == 'extend'):
             self.inputs = [self.volume_name, self.new_volume_size, self.type_vol, self.available_string]
-            self.values = [(op['name']), op['size'], op['type'], op['status']]
+            self.values = [(object_value['name']), object_value['size'], object_value['type'], object_value['status']]
 
         if self.values == self.inputs:
             print "\nVOLUME CHECKED SUCCESSFULLY\n"
             return 0
         else:
             print "\nVOLUME CHECK FAILED\n"
-            print "DEBUG: VALUES", self.volume_name, self.size_vol, self.type_vol, self.available_string, VolumeOperations.bootable_string
-            print "DEBUG: INPUTS", op['name'], op['size'], op['type'], op['status'], op['bootable']
+            print "DEBUG: INPUTS", self.volume_name, self.size_vol, self.type_vol, self.available_string, VolumeOperations.bootable_string
+            print "DEBUG: VALUES", object_value['name'], object_value['size'], object_value['type'], object_value['status'], object_value['bootable']
             return 1
 
     def volumes_clone(self, type_of_source , input_snap_or_clone_source , name_of_target):
@@ -222,11 +243,12 @@ class VolumeOperations(object):
             return 1
 
 class SnapshotOperations(object):
-    def __init__(self, **kwargs):
-        def volume_snapshot_create(self, volume_name, number_of_snapshots):
+    def __init__(self, volume_list, **kwargs):
+
+        def volume_snapshot_create(self, number_of_snapshots):
 
             # print "\n================CREATION OF VOLUME SNAPSHOT================\n"
-            self.snapshot_name = "snapshot" + "_" + volume_name
+            self.snapshot_name = "snapshot" + "_" + volume_list
             self.snapshot_description = "THIS IS THE DESCRIPTION OF SNAPSHOT %s" % (self.snapshot_name)
 
             #
