@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="d904190e-76ab-4a94-bf95-c8c65c729177" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lib/os_objects.py" afterPath="$PROJECT_DIR$/lib/os_objects.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/scripts/Sanity_all_tests_will_be_useful_for_testing_code_quickly.py" afterPath="$PROJECT_DIR$/scripts/Sanity_all_tests_will_be_useful_for_testing_code_quickly.py" />
     </list>
@@ -22,8 +21,8 @@
       <file leaf-file-name="os_objects.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/lib/os_objects.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="407">
-              <caret line="154" column="16" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="477" selection-end-column="0" />
+            <state relative-caret-position="577">
+              <caret line="304" column="37" lean-forward="true" selection-start-line="304" selection-start-column="37" selection-end-line="304" selection-end-column="37" />
               <folding>
                 <element signature="e#0#17#0" expanded="true" />
               </folding>
@@ -35,7 +34,7 @@
         <entry file="file://$PROJECT_DIR$/scripts/Sanity_all_tests_will_be_useful_for_testing_code_quickly.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="459">
-              <caret line="27" column="23" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="97" selection-end-column="0" />
+              <caret line="42" column="70" lean-forward="false" selection-start-line="42" selection-start-column="70" selection-end-line="42" selection-end-column="70" />
               <folding>
                 <element signature="e#0#17#0" expanded="true" />
               </folding>
@@ -95,7 +94,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>async_task_wait_process_volume_snapshot</find>
       <find>volume_snapshot_status_call</find>
       <find>any_volume_status</find>
       <find>def volume_or_snapshot_status_call</find>
@@ -125,6 +123,7 @@
       <find>class Ins</find>
       <find>volumes_c</find>
       <find>def volumes_c</find>
+      <find>appe</find>
     </findStrings>
     <replaceStrings>
       <replace>any_volume_status</replace>
@@ -144,8 +143,8 @@
         <option value="$PROJECT_DIR$/scripts/volume_snapshots.py" />
         <option value="$PROJECT_DIR$/scripts/volume_create_from_source.py" />
         <option value="$PROJECT_DIR$/lib/Threading.py" />
-        <option value="$PROJECT_DIR$/lib/os_objects.py" />
         <option value="$PROJECT_DIR$/scripts/Sanity_all_tests_will_be_useful_for_testing_code_quickly.py" />
+        <option value="$PROJECT_DIR$/lib/os_objects.py" />
       </list>
     </option>
   </component>
@@ -828,7 +827,7 @@
     <entry file="file://$PROJECT_DIR$/scripts/Sanity_all_tests_will_be_useful_for_testing_code_quickly.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="459">
-          <caret line="27" column="23" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="97" selection-end-column="0" />
+          <caret line="42" column="70" lean-forward="false" selection-start-line="42" selection-start-column="70" selection-end-line="42" selection-end-column="70" />
           <folding>
             <element signature="e#0#17#0" expanded="true" />
           </folding>
@@ -837,8 +836,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/lib/os_objects.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="407">
-          <caret line="154" column="16" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="477" selection-end-column="0" />
+        <state relative-caret-position="577">
+          <caret line="304" column="37" lean-forward="true" selection-start-line="304" selection-start-column="37" selection-end-line="304" selection-end-column="37" />
           <folding>
             <element signature="e#0#17#0" expanded="true" />
           </folding>

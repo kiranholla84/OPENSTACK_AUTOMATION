@@ -25,7 +25,7 @@ bootable_string = 'true'
 new_volume_size = size_vol +  10
 non_rep_vol_type = 'VMAX_SILVER'
 # volume_name = 'qe_' + non_rep_vol_type + '_' + str(time.time()) # ACTION : Should be combination of testname, qe, volume,  timestamp of creation
-volume_name_prefix = '4test_volume_qe_'
+volume_name_prefix = '99test_volume_qe_'
 
 server_name =  'qe' + '_server_' + str(time.time())# ACTION : Should be combination of testname, qe, server, timestamp of creation
 number_of_snapshots = 1
@@ -40,8 +40,8 @@ print "\nMAIN SCRIPT : VOLUME CREATE..."
 non_bootable_volume_list = os_objects_handle_volume.volumes_create()
 #
 # # EXTEND VOLUME
-# extend_val = os_objects_handle_volume.volume_extend(volume_list, new_volume_size)
-# print "\nMAIN SCRIPT : VOLUME EXTEND...%s" %(extend_val)
+extend_val = os_objects_handle_volume.volume_extend(volume_name_prefix, new_volume_size)
+print "\nMAIN SCRIPT : VOLUME EXTEND...%s" %(extend_val)
 #
 # # SNAPSHOT CREATION OF UNATTACHED VOLUME
 # print "\nMAIN SCRIPT : SNAPSHOT CREATE..."

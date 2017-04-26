@@ -8,7 +8,7 @@ import time
 import sys
 import re
 import yaml
-
+from random import randint
 
 class VolumeOperations(object):
     bootable_true_string = 'true'
@@ -49,32 +49,36 @@ class VolumeOperations(object):
         self.op_state = self.volume_or_snapshot_status_call(type_of_object, name_of_object)
 
         # Now wait for the state of the volume or snapshot to change to "Available"
-        while (self.op_state['status'] != final_async_state):
+        if (self.op_state['status'] == final_async_state):
+            print "\nSTATUS OF THE VOLUME IS ALREADY %s STATE" %final_async_state
+            return self.op_state
+        else:
+            while (self.op_state['status'] != final_async_state):
 
-            # Sometimes the status may go to error. If that is the case return the message to the yser
-            if (self.op_state['status'].lower == 'error'):
-                print "\nFAILURE IN VOLUME/SNAPSHOT %s ASYNC OPERATION. EXITING" % name_of_object
-                break
-            elif (self.op_state['status'].lower == 'deleting'):
-                print "\nWAITING FOR VOLUME/SNAPSHOT %s TO BE DELETED. CURRENTLY VOLUME STATE IS IN %s\n" % (self.op_state['name'], self.op_state['status'])
-            else:
-                print "\nWAITING FOR STATUS OF THE VOLUME/SNAPSHOT %s TO BE IN %s STATE..\nCURRENTLY VOLUME STATE IS IN %s STATE\n" % (
-                name_of_object, final_async_state, self.op_state['status'])
+                # Sometimes the status may go to error. If that is the case return the message to the yser
+                if (self.op_state['status'].lower == 'error'):
+                    print "\nFAILURE IN VOLUME/SNAPSHOT %s ASYNC OPERATION. EXITING" % name_of_object
+                    break
+                elif (self.op_state['status'].lower == 'deleting'):
+                    print "\nWAITING FOR VOLUME/SNAPSHOT %s TO BE DELETED. CURRENTLY VOLUME STATE IS IN %s\n" % (self.op_state['name'], self.op_state['status'])
+                else:
+                    print "\nWAITING FOR STATUS OF THE VOLUME/SNAPSHOT %s TO BE IN %s STATE..\nCURRENTLY VOLUME STATE IS IN %s STATE\n" % (
+                    name_of_object, final_async_state, self.op_state['status'])
 
-            time.sleep(5)
+                time.sleep(15)
 
-            # This is to get the latest status dynamically
-            self.op_state = self.volume_or_snapshot_status_call(type_of_object, name_of_object)
+                # This is to get the latest status dynamically
+                self.op_state = self.volume_or_snapshot_status_call(type_of_object, name_of_object)
 
-            # This will be entered if delete volume is the async operation
-            if self.op_state == 1:
-                print "%s WITH NAME %s SUCCESSFULLY DELETED" % (type_of_object, name_of_object)
-                return 0
-            elif self.op_state['status'] == final_async_state:
-                print "\nSTATUS OF THE %s %s IS IN %s STATE..\n" % (type_of_object, name_of_object, self.op_state['status'])
-                return self.op_state
-            else:
-                pass
+                # This will be entered if delete volume is the async operation
+                if self.op_state == 1:
+                    print "%s WITH NAME %s SUCCESSFULLY DELETED" % (type_of_object, name_of_object)
+                    return 0
+                elif self.op_state['status'] == final_async_state:
+                    print "\nSTATUS OF THE %s %s IS IN %s STATE..\n" % (type_of_object, name_of_object, self.op_state['status'])
+                    return self.op_state
+                else:
+                    pass
 
     def dynamic_image_get(self):
 
@@ -86,16 +90,25 @@ class VolumeOperations(object):
 
     def volumes_create(self):
 
-        # ACTION :Modularize : Below should be modularized
+        # Initialize
         self.list_checkOutput = dict()
         self.op = []
         self.volume_name = []
+        self.type_vol = []
+        self.size_vol = []
 
         # Execute creation of all volumes in parallel. This is not a multi-threaded way of calling though
         for volume_index in range(0, self.number_of_volumes - 1):
 
+            # Append the latest volume name to the volume name list
             self.volume_name.append((self.volume_name_prefix + str(volume_index)))
 
+            # Append the latest volume size to the volume size list. Currently it will be 50, 100GB. This can be controlled from outside by intake of variables
+            self.size_vol.append((self.size_vol + randint(50,100)))
+
+            self.type_vol.append(self.type_vol +  FUNCTION_TO_GET_SINGLE_VOLUME_TYPE)
+
+            # Check for bootable volumes as command is different. These commands need to be modularized
             if (self.bootable_factor == "bootable"):
                 print "\n================CREATING BOOTABLE VOLUME %s ================\n" %(self.volume_name[volume_index])
                 VolumeOperations.bootable_string = VolumeOperations.bootable_true_string
@@ -105,30 +118,26 @@ class VolumeOperations(object):
                 print "\n==>IMAGE WHICH WILL BE USED FOR BOOTABLE VOLUME CREATION IS", os_image, "...\n"
 
                 self.list_checkOutput[volume_index] = ['openstack', 'volume', 'create', '--image', os_image, '--type',
-                                    self.type_vol, '--size', str(self.size_vol), self.volume_name[volume_index], '-f', 'json']
+                                     self.type_vol[volume_index], '--size', str(self.size_vol[volume_index]), self.volume_name[volume_index], '-f', 'json']
             else:
                 VolumeOperations.bootable_string = VolumeOperations.bootable_false_string
                 print "\n================CREATING NON-BOOTABLE VOLUME %s ================\n" %(self.volume_name[volume_index])
-                self.list_checkOutput[volume_index]= ['openstack', 'volume', 'create', '--size', str(self.size_vol), '--type', self.type_vol,
-                                    self.volume_name[volume_index], '-f', 'json']
+                self.list_checkOutput[volume_index]= ['openstack', 'volume', 'create', '--size', str(self.size_vol[volume_index]), '--type', self.type_vol[volume_index],
+                                     self.volume_name[volume_index], '-f', 'json']
 
-            print "DEBUG:list_checkOutput for index %s is %s" %(volume_index, self.list_checkOutput[volume_index])
-
-            # Execute the Openstack CLI Command
+            # Execute the Openstack CLI Command which creates volume
             self.temp = subprocess.check_output(self.list_checkOutput[volume_index])
             self.temp2 = loads(self.temp)
             self.op.append(self.temp2)
 
-            print "DEBUG:OP is %s for index %s" %(self.op[volume_index],volume_index)
-
-        # Run the async operation for all volumes in parallel
+        # Run the async operation for all volumes in parallel. This will wait for the volumes to be created
         for volume_index in range(0, self.number_of_volumes - 1):
+
             # Wait for the volume creation to complete as it is async task
             self.op[volume_index] = self.async_task_wait_process_for_volume("volume", self.volume_name[volume_index], self.available_string)
+            print "DEBUG:self op index is" %(self.op[volume_index])
 
-            print "DEBUG:VOLUME NOW IS %s" %(self.op[volume_index])
-
-            # Check for the volume creation
+            # Check for the volume(s) creation
             self.object_index_dict = {volume_index : self.op[volume_index]}
             self.comparison_check_parameter = self.volume_check(self.object_index_dict, 'create')
             if self.comparison_check_parameter == 0:
