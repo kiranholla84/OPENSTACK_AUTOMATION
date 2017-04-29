@@ -18,23 +18,23 @@
   <component name="ExecutionTargetManager" SELECTED_TARGET="default_target" />
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="os_objects.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="os_objects.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/lib/os_objects.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="17">
-              <caret line="16" column="128" lean-forward="false" selection-start-line="0" selection-start-column="4" selection-end-line="539" selection-end-column="0" />
+            <state relative-caret-position="186">
+              <caret line="302" column="80" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="580" selection-end-column="0" />
               <folding>
-                <element signature="e#4#21#0" expanded="true" />
+                <element signature="e#0#17#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Sanity_all_tests_will_be_useful_for_testing_code_quickly.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="Sanity_all_tests_will_be_useful_for_testing_code_quickly.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/scripts/Sanity_all_tests_will_be_useful_for_testing_code_quickly.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="561">
-              <caret line="33" column="40" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="97" selection-end-column="0" />
+            <state relative-caret-position="526">
+              <caret line="40" column="79" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="95" selection-end-column="0" />
               <folding>
                 <element signature="e#0#17#0" expanded="true" />
               </folding>
@@ -94,36 +94,36 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>def any_volume_status</find>
-      <find>volume_de</find>
-      <find>volume_extend</find>
-      <find>volume_snapshot_check</find>
-      <find>def async_task_wait_process_for_volume_and_snapshot</find>
-      <find>async_task_wait_process_for_volume_and_snapshot</find>
-      <find>async_task_delete_wait_process_for_volume_and_snapshot</find>
-      <find>volume_or_snapshot_status_call</find>
-      <find>self.</find>
-      <find>def async_task_wait_process_for_volume</find>
-      <find>extend</find>
-      <find>bootable_st</find>
-      <find>bootable_str</find>
-      <find>name_of</find>
-      <find>loads</find>
-      <find>list_check_output</find>
-      <find>async_task_wait_process_for_volume</find>
-      <find>NEW EXTENDED SIZE OF VOLUME</find>
-      <find>def volume_c</find>
-      <find>volume_c</find>
-      <find>def volume_de</find>
       <find>'server'</find>
       <find>volume_snapshot_create</find>
       <find>class Ins</find>
       <find>volumes_c</find>
-      <find>def volumes_c</find>
       <find>appe</find>
       <find>show</find>
       <find>replication_t</find>
       <find>replication_fa</find>
+      <find>select_volume_size</find>
+      <find>replication_type</find>
+      <find>volumeop</find>
+      <find>HERE ARE THE VOLUME TYPES AVAILABLE</find>
+      <find>INPUTS TO CREATE VOL</find>
+      <find>STATUS</find>
+      <find>STATUS OF</find>
+      <find>number_of_volumes</find>
+      <find>def async_task_wait_process_for_volume</find>
+      <find>def volumes_c</find>
+      <find>def volume_or_snapshot_status_call</find>
+      <find>STATUS</find>
+      <find>DEBUG1</find>
+      <find>volume_c</find>
+      <find>append</find>
+      <find>volume_ext</find>
+      <find>volume_check</find>
+      <find>rand</find>
+      <find>volume_Exte</find>
+      <find>new size</find>
+      <find>new s</find>
+      <find>ENGTH OF THE VOLUME ARRAY</find>
     </findStrings>
     <replaceStrings>
       <replace>any_volume_status</replace>
@@ -143,16 +143,16 @@
         <option value="$PROJECT_DIR$/scripts/volume_snapshots.py" />
         <option value="$PROJECT_DIR$/scripts/volume_create_from_source.py" />
         <option value="$PROJECT_DIR$/lib/Threading.py" />
-        <option value="$PROJECT_DIR$/scripts/Sanity_all_tests_will_be_useful_for_testing_code_quickly.py" />
         <option value="$PROJECT_DIR$/lib/os_objects.py" />
+        <option value="$PROJECT_DIR$/scripts/Sanity_all_tests_will_be_useful_for_testing_code_quickly.py" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds">
     <option name="x" value="-8" />
     <option name="y" value="-8" />
-    <option name="width" value="1296" />
-    <option name="height" value="1000" />
+    <option name="width" value="1376" />
+    <option name="height" value="744" />
   </component>
   <component name="ProjectView">
     <navigator proportions="" version="1">
@@ -383,7 +383,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1296" height="1000" extended-state="6" />
+    <frame x="-8" y="-8" width="1376" height="744" extended-state="6" />
     <editor active="true" />
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
@@ -395,7 +395,7 @@
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.023569023" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.028346457" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -457,7 +457,7 @@
         <state relative-caret-position="1751">
           <caret line="103" column="49" lean-forward="false" selection-start-line="103" selection-start-column="41" selection-end-line="103" selection-end-column="49" />
           <folding>
-            <element signature="e#4#21#0" expanded="true" />
+            <element signature="e#0#17#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -511,7 +511,7 @@
         <state relative-caret-position="2601">
           <caret line="153" column="32" lean-forward="false" selection-start-line="153" selection-start-column="32" selection-end-line="153" selection-end-column="32" />
           <folding>
-            <element signature="e#4#21#0" expanded="true" />
+            <element signature="e#0#17#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -565,7 +565,7 @@
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <element signature="e#4#21#0" expanded="true" />
+            <element signature="e#0#17#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -609,7 +609,7 @@
         <state relative-caret-position="51">
           <caret line="11" column="23" lean-forward="false" selection-start-line="11" selection-start-column="23" selection-end-line="11" selection-end-column="23" />
           <folding>
-            <element signature="e#4#21#0" expanded="true" />
+            <element signature="e#0#17#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -640,7 +640,7 @@
         <state relative-caret-position="119">
           <caret line="15" column="22" lean-forward="false" selection-start-line="15" selection-start-column="8" selection-end-line="15" selection-end-column="22" />
           <folding>
-            <element signature="e#4#21#0" expanded="true" />
+            <element signature="e#0#17#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -671,7 +671,7 @@
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <element signature="e#4#21#0" expanded="true" />
+            <element signature="e#0#17#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -702,7 +702,7 @@
         <state relative-caret-position="119">
           <caret line="15" column="18" lean-forward="false" selection-start-line="15" selection-start-column="18" selection-end-line="15" selection-end-column="18" />
           <folding>
-            <element signature="e#4#21#0" expanded="true" />
+            <element signature="e#0#17#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -733,7 +733,7 @@
         <state relative-caret-position="238">
           <caret line="14" column="41" lean-forward="false" selection-start-line="14" selection-start-column="41" selection-end-line="14" selection-end-column="41" />
           <folding>
-            <element signature="e#4#21#0" expanded="true" />
+            <element signature="e#0#17#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -824,22 +824,22 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/scripts/Sanity_all_tests_will_be_useful_for_testing_code_quickly.py">
+    <entry file="file://$PROJECT_DIR$/lib/os_objects.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="561">
-          <caret line="33" column="40" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="97" selection-end-column="0" />
+        <state relative-caret-position="186">
+          <caret line="302" column="80" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="580" selection-end-column="0" />
           <folding>
             <element signature="e#0#17#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/lib/os_objects.py">
+    <entry file="file://$PROJECT_DIR$/scripts/Sanity_all_tests_will_be_useful_for_testing_code_quickly.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="17">
-          <caret line="16" column="128" lean-forward="false" selection-start-line="0" selection-start-column="4" selection-end-line="539" selection-end-column="0" />
+        <state relative-caret-position="526">
+          <caret line="40" column="79" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="95" selection-end-column="0" />
           <folding>
-            <element signature="e#4#21#0" expanded="true" />
+            <element signature="e#0#17#0" expanded="true" />
           </folding>
         </state>
       </provider>
