@@ -29,21 +29,31 @@ server_name =  'qe' + '_server_' + str(time.time())# ACTION : Should be combinat
 number_of_snapshots = 1
 
 # Object instatiation [May be modularized]
-os_objects_handle_volume = VolumeOperations(bootable_factor = 'nonbootable', volume_name_prefix = 'IND18_', number_of_volumes=2)
+os_objects_handle_volume = VolumeOperations(bootable_factor = 'nonbootable', volumes_name_prefix = 'INDA127_', number_of_volumes=2)
 # os_objects_handle_snapshots = SnapshotOperations(volume_list)
 # os_objects_handle_instance = InstanceOperations(volume_list)
 
 # MULTIPLE VOLUME CREATION
 print "\nMAIN SCRIPT : VOLUME CREATE..."
 non_bootable_volume_list = os_objects_handle_volume.volumes_create()
+print "\nMAIN SCRIPT : NONBOOTABLE VOLUME LIST IS %s" %non_bootable_volume_list
+
+# os_objects_handle_volume = VolumeOperations(bootable_factor = 'bootable', volumes_name_prefix = 'INDA126_', number_of_volumes=2)
 #
-# # EXTEND VOLUME
-extend_val = os_objects_handle_volume.volume_extend(volume_name_prefix = 'IND18_', extension_factor = 2)
-print "\nMAIN SCRIPT : VOLUME EXTEND...%s" %(extend_val)
+# # MULTIPLE VOLUME CREATION
+# print "\nMAIN SCRIPT : VOLUME CREATE..."
+# bootable_volume_list = os_objects_handle_volume.volumes_create()
+# print "\nMAIN SCRIPT : BOOTABLE VOLUME LIST IS %s" %bootable_volume_list
 #
+# # # # EXTEND VOLUME
+# extend_val = os_objects_handle_volume.volumes_extend(bootable_volume_list, volumes_name_prefix = 'INDA126_', extension_factor = 2)
+# extend_val = os_objects_handle_volume.volumes_extend(non_bootable_volume_list, volumes_name_prefix = 'INDA127_', extension_factor = 2)
+# print "\nMAIN SCRIPT : VOLUME EXTEND...%s" %(extend_val)
+# #
+
 # # SNAPSHOT CREATION OF UNATTACHED VOLUME
 # print "\nMAIN SCRIPT : SNAPSHOT CREATE..."
-# snapshot_name = os_objects_handle_volume.volume_snapshot_create(volume_list, number_of_snapshots)
+snapshot_name = os_objects_handle_volume.volume_snapshot_create(non_bootable_volume_list, number_of_snapshots=1)
 #
 # # INSTANCE CREATION
 # os_objects_handle_server = InstanceOperations(server_name,image,flavor)
@@ -81,9 +91,9 @@ print "\nMAIN SCRIPT : VOLUME EXTEND...%s" %(extend_val)
 # snapshot_delete = os_objects_handle_volume.volume_snapshot_delete(snapshot_name_2)
 
 # DELETE VOLUMES
-# "\nMAIN SCRIPT : VOLUME DELETION"
-# volume_delete = os_objects_handle_volume.volume_delete(volume_name)
-# print "DEBUG: volume_delete is %s" %volume_delete
+print "\nMAIN SCRIPT : VOLUME DELETION"
+volume_delete = os_objects_handle_volume.volumes_delete(non_bootable_volume_list, volumes_name_prefix = 'INDA125_')
+print "DEBUG: volume_delete is %s" %volume_delete
 # volume_delete = os_objects_handle_volume.volume_delete(volume_from_snapshot)
 # volume_delete = os_objects_handle_volume.volume_delete(volume_from_volume)
 

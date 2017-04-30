@@ -18,11 +18,11 @@
   <component name="ExecutionTargetManager" SELECTED_TARGET="default_target" />
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="os_objects.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="os_objects.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/lib/os_objects.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="186">
-              <caret line="302" column="80" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="580" selection-end-column="0" />
+            <state relative-caret-position="4267">
+              <caret line="398" column="79" lean-forward="true" selection-start-line="398" selection-start-column="79" selection-end-line="398" selection-end-column="79" />
               <folding>
                 <element signature="e#0#17#0" expanded="true" />
               </folding>
@@ -30,11 +30,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Sanity_all_tests_will_be_useful_for_testing_code_quickly.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="Sanity_all_tests_will_be_useful_for_testing_code_quickly.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/scripts/Sanity_all_tests_will_be_useful_for_testing_code_quickly.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="526">
-              <caret line="40" column="79" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="95" selection-end-column="0" />
+            <state relative-caret-position="447">
+              <caret line="55" column="88" lean-forward="false" selection-start-line="55" selection-start-column="64" selection-end-line="55" selection-end-column="88" />
               <folding>
                 <element signature="e#0#17#0" expanded="true" />
               </folding>
@@ -94,41 +94,50 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>'server'</find>
-      <find>volume_snapshot_create</find>
-      <find>class Ins</find>
-      <find>volumes_c</find>
-      <find>appe</find>
-      <find>show</find>
-      <find>replication_t</find>
-      <find>replication_fa</find>
-      <find>select_volume_size</find>
-      <find>replication_type</find>
-      <find>volumeop</find>
-      <find>HERE ARE THE VOLUME TYPES AVAILABLE</find>
-      <find>INPUTS TO CREATE VOL</find>
-      <find>STATUS</find>
-      <find>STATUS OF</find>
-      <find>number_of_volumes</find>
-      <find>def async_task_wait_process_for_volume</find>
-      <find>def volumes_c</find>
-      <find>def volume_or_snapshot_status_call</find>
-      <find>STATUS</find>
-      <find>DEBUG1</find>
-      <find>volume_c</find>
-      <find>append</find>
-      <find>volume_ext</find>
       <find>volume_check</find>
       <find>rand</find>
       <find>volume_Exte</find>
       <find>new size</find>
       <find>new s</find>
       <find>ENGTH OF THE VOLUME ARRAY</find>
+      <find>volume_delete</find>
+      <find>volume_</find>
+      <find>IND18</find>
+      <find>sub</find>
+      <find>volumes_dele</find>
+      <find>def async_task_wait_process_for_volume</find>
+      <find>IND20</find>
+      <find>def volumes_de</find>
+      <find>IND21</find>
+      <find>length_volumes_array</find>
+      <find>IND22</find>
+      <find>def volums</find>
+      <find>IND23</find>
+      <find>volumes_cre</find>
+      <find>volumes_name_prefixvolumex</find>
+      <find>class S</find>
+      <find>IND24</find>
+      <find>volumes_check</find>
+      <find>volumes_check(</find>
+      <find>random</find>
+      <find>volumes_snapshot_create</find>
+      <find>INDA</find>
+      <find>def</find>
+      <find>append</find>
     </findStrings>
     <replaceStrings>
       <replace>any_volume_status</replace>
       <replace>volume_or_snapshot_status_call</replace>
       <replace>async_task_wait_process_for_volume</replace>
+      <replace>IND19</replace>
+      <replace>IND20</replace>
+      <replace>IND21</replace>
+      <replace>IND22</replace>
+      <replace>IND23</replace>
+      <replace>IND24</replace>
+      <replace>IND25</replace>
+      <replace>volumes_</replace>
+      <replace>INDA1</replace>
     </replaceStrings>
   </component>
   <component name="Git.Settings">
@@ -143,8 +152,8 @@
         <option value="$PROJECT_DIR$/scripts/volume_snapshots.py" />
         <option value="$PROJECT_DIR$/scripts/volume_create_from_source.py" />
         <option value="$PROJECT_DIR$/lib/Threading.py" />
-        <option value="$PROJECT_DIR$/lib/os_objects.py" />
         <option value="$PROJECT_DIR$/scripts/Sanity_all_tests_will_be_useful_for_testing_code_quickly.py" />
+        <option value="$PROJECT_DIR$/lib/os_objects.py" />
       </list>
     </option>
   </component>
@@ -824,20 +833,20 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/lib/os_objects.py">
+    <entry file="file://$PROJECT_DIR$/scripts/Sanity_all_tests_will_be_useful_for_testing_code_quickly.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="186">
-          <caret line="302" column="80" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="580" selection-end-column="0" />
+        <state relative-caret-position="447">
+          <caret line="55" column="88" lean-forward="false" selection-start-line="55" selection-start-column="64" selection-end-line="55" selection-end-column="88" />
           <folding>
             <element signature="e#0#17#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/scripts/Sanity_all_tests_will_be_useful_for_testing_code_quickly.py">
+    <entry file="file://$PROJECT_DIR$/lib/os_objects.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="526">
-          <caret line="40" column="79" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="95" selection-end-column="0" />
+        <state relative-caret-position="4267">
+          <caret line="398" column="79" lean-forward="true" selection-start-line="398" selection-start-column="79" selection-end-line="398" selection-end-column="79" />
           <folding>
             <element signature="e#0#17#0" expanded="true" />
           </folding>
