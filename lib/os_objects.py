@@ -45,7 +45,7 @@ class VolumeOperations(object):
             print "\nERROR CODE", e.returncode
             return e.returncode
 
-    def volumes_type_return(self, replication_type):
+    def volumes_type_return(self, replication_type = 'non-replicated'):
         # Command to list all volume types
         self.list_checkOutput = ['openstack', 'volume', 'type', 'list', '-f', 'json']
         self.op = subprocess.check_output(self.list_checkOutput)
@@ -89,7 +89,7 @@ class VolumeOperations(object):
             # print "\nDEBUG : RETURNING VOLUME TYPE:%s" %random.choice(self.non_replication_list)
             return random.choice(self.non_replication_list)
 
-    def async_task_wait_process_for_volume(self, type_of_object , name_of_object, final_async_state):
+    def async_task_wait_process_for_volume(self, type_of_object, name_of_object, final_async_state):
 
         # Get the initial volume or snapshot status
         self.op_state = self.volumes_or_snapshot_status_call(type_of_object, name_of_object)
@@ -149,87 +149,114 @@ class VolumeOperations(object):
         self.volumes_name = []
         self.type_vol = []
         self.size_vol = []
+        self.volume_details_input_list = []
+        self.final_volumes_array_objects = []
         self.volumes_array_objects = []
 
+
         # Execute creation of all volumes in parallel. This is not a multi-threaded way of calling though
-        for volumes_index in range(0, self.number_of_volumes):
+        for self.volumes_index in range(0, self.number_of_volumes):
 
-            # Append the latest volume name to the volume name list
-            self.volumes_name.append((self.volumes_name_prefix + str(volumes_index)))
+            # Create a dictionary of values for each input volume  having common volume properties
+            self.volume_details = {'name': self.volumes_name_prefix + str(self.volumes_index),
+                                   'size': self.select_volumes_size() ,'volume_type' : self.volumes_type_return(),
+                                   'bootable_factor': self.bootable_factor}
 
-            print "\n================CREATING %s VOLUME %s ================\n" % (self.bootable_factor , self.volumes_name[volumes_index])
+            # Append the latest volume name dictionary entry to the volume name list. This  list of dictionaries
+            # will be used later for comparison
+            self.volume_details_input_list.append(self.volume_details)
 
-            # Append the latest volume size to the volume size list. Currently it will be based on select_volumes_sizes. This can be controlled from outside by intake of variables
-            self.size_vol.append(self.select_volumes_size())
+            print "\n================CREATING %s VOLUME %s ================\n" \
+            % (self.volume_details_input_list[self.volumes_index]['bootable_factor'],
+            (self.volume_details_input_list[self.volumes_index]['name']))
 
-            # Append the volume type to the array
-            self.type_vol.append(self.volumes_type_return(self.replication_type))
+            # This is only to input to the command below , or else the command would look too long!
+            self.input_volume_name = self.volume_details_input_list[self.volumes_index]['name']
+            self.input_volume_size = self.volume_details_input_list[self.volumes_index]['size']
+            self.input_volume_type = self.volume_details_input_list[self.volumes_index]['volume_type']
 
-            # Check for bootable volumes as command is different. These commands need to be modularized
+            print "DEBUG1 %s %s %s " % (self.input_volume_name, self.input_volume_size, self.input_volume_type)
+
+            # Check for bootable volumes as command is different.
             if (self.bootable_factor == "bootable"):
+
+                # Get the OS image dynamically from CLI
+                self.os_image = self.dynamic_image_get()
+                print "\n==>IMAGE WHICH WILL BE USED FOR BOOTABLE VOLUME CREATION IS", self.os_image, "...\n"
 
                 # Set this class variable as it will be same across instances
                 VolumeOperations.bootable_string = VolumeOperations.bootable_true_string
 
-                # Get the OS image dynamically from CLI
-                os_image = self.dynamic_image_get()
-                print "\n==>IMAGE WHICH WILL BE USED FOR BOOTABLE VOLUME CREATION IS", os_image, "...\n"
-
                 # Volume Create Command to be input
-                self.list_checkOutput[volumes_index] = ['openstack', 'volume', 'create', '--image', os_image, '--type',
-                                     self.type_vol[volumes_index], '--size', str(self.size_vol[volumes_index]), self.volumes_name[volumes_index], '-f', 'json']
+                self.list_checkOutput[self.volumes_index] = ['openstack', 'volume', 'create', '--image',
+                                                             self.os_image, '--type', self.input_volume_type ,
+                                                             '--size', str(self.input_volume_size),
+                                                             self.input_volume_name, '-f', 'json']
             else:
                 # Set this class variable as it will be same across instances
                 VolumeOperations.bootable_string = VolumeOperations.bootable_false_string
 
                 # Volume Create Command to be input
-                self.list_checkOutput[volumes_index]= ['openstack', 'volume', 'create', '--size', str(self.size_vol[volumes_index]), '--type', self.type_vol[volumes_index],
-                                     self.volumes_name[volumes_index], '-f', 'json']
+                self.list_checkOutput[self.volumes_index]= ['openstack', 'volume', 'create', '--size',
+                                                            str(self.input_volume_size), '--type',
+                                                            self.input_volume_type, self.input_volume_name,
+                                                            '-f', 'json']
+
+            # Set the bootable string in the input volume list to True or False
+            self.volume_details['bootable_factor'] = VolumeOperations.bootable_string
 
             # Execute the Openstack CLI Command which creates volume
-            self.temp = subprocess.check_output(self.list_checkOutput[volumes_index])
+            self.temp = subprocess.check_output(self.list_checkOutput[self.volumes_index])
             self.temp2 = loads(self.temp)
             self.op.append(self.temp2)
 
-        # Run the async operation for all volumes in parallel. This will wait for the volumes to be created
-        for volumes_index in range(0, self.number_of_volumes):
+        # Check the volume creation one by one
+        for self.volumes_index in range(0, self.number_of_volumes):
 
-            # Wait for the volume creation to complete as it is async task. The below object holds an array of objects, each object having volume properties in dict form
-            self.volumes_array_objects.append(self.async_task_wait_process_for_volume("volume", self.volumes_name[volumes_index], self.available_string))
-            print "DEBUG:VOLUME OBJECT IS %s" %(self.volumes_array_objects[volumes_index])
-            print "DEBUG:NAME %s" % (self.volumes_array_objects[volumes_index]['name'])
-            print "DEBUG:SIZE %s" % (self.volumes_array_objects[volumes_index]['size'])
+            self.comparison_check_parameter = self.volumes_check(self.volume_details_input_list, self.volumes_index, 'create')
 
-            # Creating a dictionary below to send it as an object to the volume check. Embeddint required items into the dictionary
-            self.volumes_object_index_dict = {volumes_index : self.volumes_array_objects[volumes_index]}
+            # the tuple returned has the volume object in the first
+            self.final_volumes_array_objects.append(self.comparison_check_parameter[0])
 
-            # Invoking volumes_check for each element of the array
-            self.comparison_check_parameter = self.volumes_check(self.volumes_object_index_dict, self.volumes_array_objects ,'create',)
-            if self.comparison_check_parameter == 0:
-                print "VOLUME %s SUCCESSFULLY CREATED" % (self.volumes_name[volumes_index])
+            # Check for volume creation
+            if self.comparison_check_parameter[1] == 0:
+                print "VOLUME %s SUCCESSFULLY CREATED" % (self.volume_details_input_list[self.volumes_index]['name'])
             else:
                 print "VOLUME NOT CREATED"
 
         print "\nDEBUG: FINAL VOLUME ARRAY IS %s" %self.volumes_array_objects
-        print "\nDEBUG: FINAL VOLUME ARRAY IS WITH INDEX COUNT %s" % self.volumes_object_index_dict
-        return self.volumes_array_objects
+        return self.final_volumes_array_objects
 
-    def volumes_check(self, volumes_object_index_dict , original_volume_list , type_of_operation, *args):
+    def volumes_check(self, user_input_list, index_of_list, type_of_operation, final_state_of_volume='available'):
 
+        self.volume_details_input_list = user_input_list
+        self.volumes_index = index_of_list
         self.type_of_operation = type_of_operation
-        self.object_index_dict = volumes_object_index_dict
-        self.original_volume_list = original_volume_list
+        self.final_state_of_volume = final_state_of_volume
 
-        # create
-        if (self.type_of_operation == 'create'):
-            # print "\nDEBUG1: %s" %(object_index_dict.values()[0])['type']
-            # print "\nDEBUG2: %s" %(object_index_dict.values()[0])
-            # print "\nDEBUG3: %s" %object_index_dict.values()
-            # Inputs are from user invoked scripts
-            self.inputs = [self.volumes_name[self.object_index_dict.keys()[0]], self.size_vol[self.object_index_dict.keys()[0]], self.type_vol[self.object_index_dict.keys()[0]], self.available_string, VolumeOperations.bootable_string]
+
+        # Wait due to async operation. Wait for the particular volume to be in available state
+        self.volumes_array_objects.append(self.async_task_wait_process_for_volume("volume",
+                                          self.volume_details_input_list[self.volumes_index]['name'],
+                                          self.final_state_of_volume))
+
+        if self.type_of_operation == 'create':
+
+            print "DEBUG1: volume_details_input_list %s"  %self.volume_details_input_list
+            print "DEBUG2: volumes_array_objects %s" % self.volumes_array_objects
+            print "DEBUG3 : Index %s" %self.volumes_index
+            print "DEBUG4 : %s" %(self.volumes_array_objects[self.volumes_index])
+
+            self.inputs = [self.volume_details_input_list[self.volumes_index]['name'],
+                           self.volume_details_input_list[self.volumes_index]['size'],
+                           self.volume_details_input_list[self.volumes_index]['volume_type'],
+                           self.volume_details_input_list[self.volumes_index]['bootable_factor']]
 
             # Outputs are from the object details of the newly created volume. Both will be compared
-            self.values = [(self.object_index_dict.values()[0])['name'], (self.object_index_dict.values()[0])['size'], (self.object_index_dict.values()[0])['type'], (self.object_index_dict.values()[0])['status'], (self.object_index_dict.values()[0])['bootable']]
+            self.values = [self.volumes_array_objects[self.volumes_index]['name'],
+                           self.volumes_array_objects[self.volumes_index]['size'],
+                           self.volumes_array_objects[self.volumes_index]['type'],
+                           self.volumes_array_objects[self.volumes_index]['bootable']]
 
         # Clone
         if (self.type_of_operation == 'clone'):
@@ -249,9 +276,14 @@ class VolumeOperations(object):
             self.inputs = [(self.original_volume_list[self.object_index_dict.keys()[0]])['name'] , self.intended_extended_size]
             self.values = [(self.object_index_dict.values()[0])['name'],(self.object_index_dict.values()[0])['size']]
 
+        # delete
+        if(self.type_of_operation == 'delete'):
+            if self.volumes_array_objects == 0:
+                return 0
+
         if self.values == self.inputs:
             print "\nVOLUME CHECK COMPLETED SUCCESSFULLY\n"
-            return 0
+            return (self.volumes_array_objects,0)
         else:
             print "\nVOLUME CHECK FAILED\n"
             print "DEBUG: INPUTS", self.inputs
@@ -335,24 +367,28 @@ class VolumeOperations(object):
 
         self.volume_list = volume_list
         self.length_volumes_array = len(self.volume_list)
+        self.delete_number = 0
 
         print "DEBUG1: Type of volume list" , type(volume_list)
         print "DEBUG2 : volume list" , self.volume_list
 
         for self.volumes_index in range(0, self.length_volumes_array):
 
-            print "\n================DELETION OF VOLUME %s================\n" % (self.volume_list[self.volumes_index])['name']
+            print "\n==========DELETION OF VOLUME %s==========\n" % (self.volume_list[self.volumes_index])['name']
 
             self.list_checkOutput_delete = ['openstack' ,'volume' ,'delete' , (self.volume_list[self.volumes_index])['name']]
             self.op = subprocess.check_output(self.list_checkOutput_delete)
 
-            self.op_status = self.async_task_wait_process_for_volume("volume", (self.volume_list[self.volumes_index])['name'], "NA")
+            self.op_status = self.volumes_check(self.volume_list, self.volumes_index , "delete", "NA")
 
             # Enter only if the volume exists
             if self.op_status == 0:
                 print "\nVOLUME %s SUCCESSFULLY DELETED" %(self.volume_list[self.volumes_index])['name']
+                self.delete_number = self.delete_number + 1
             else:
                 print "\nVOLUME %s COULD NOT BE DELETED" %(self.volume_list[self.volumes_index])['name']
+
+        return self.delete_number
 
 class SnapshotOperations(object):
     def __init__(self, volumes_list, **kwargs):
