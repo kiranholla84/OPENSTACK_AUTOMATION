@@ -24,6 +24,17 @@ class VolumeOperations(object):
         self.available_string = 'available'
         self.number_of_volumes = number_of_volumes
 
+        # Initialize
+        self.list_checkOutput = dict()
+        self.op = []
+        self.volumes_name = []
+        self.type_vol = []
+        self.size_vol = []
+        self.volume_details_input_list = []
+        self.final_volumes_array_objects = []
+        self.volumes_array_objects = []
+        self.volumes_check_array_objects = []
+
     def volumes_or_snapshot_status_call(self, type_of_object, name_of_object):
 
         self.type_of_object = type_of_object
@@ -102,7 +113,7 @@ class VolumeOperations(object):
             while (self.op_state['status'] != final_async_state):
 
                 # Sometimes the status may go to error. If that is the case return the message to the yser
-                if (self.op_state['status'].lower == 'error'):
+                if self.op_state['status'].lower == 'error' or self.op_state['status'].lower == 'error_deleting':
                     print "\nFAILURE IN VOLUME/SNAPSHOT %s ASYNC OPERATION. EXITING" % name_of_object
                     break
                 elif (self.op_state['status'].lower == 'deleting'):
@@ -142,17 +153,6 @@ class VolumeOperations(object):
         return self.val
 
     def volumes_create(self):
-
-        # Initialize
-        self.list_checkOutput = dict()
-        self.op = []
-        self.volumes_name = []
-        self.type_vol = []
-        self.size_vol = []
-        self.volume_details_input_list = []
-        self.final_volumes_array_objects = []
-        self.volumes_array_objects = []
-
 
         # Execute creation of all volumes in parallel. This is not a multi-threaded way of calling though
         for self.volumes_index in range(0, self.number_of_volumes):
@@ -224,28 +224,35 @@ class VolumeOperations(object):
             else:
                 print "VOLUME NOT CREATED"
 
-        print "\nDEBUG: FINAL VOLUME ARRAY IS %s" %self.volumes_array_objects
+        print "\nDEBUG: FINAL VOLUME ARRAY IS %s" %self.final_volumes_array_objects
+
+        # Clear out the array self.volumes_check_array_objects used in volumes_check
+        self.volumes_check_array_objects = []
+
         return self.final_volumes_array_objects
 
-    def volumes_check(self, user_input_list, index_of_list, type_of_operation, final_state_of_volume='available'):
+    def volumes_check(self, user_input_list, index_of_list, type_of_operation, final_state_of_volume='available', *args):
+
+        # self.volumes_check(self.volume_extend_list, self.volumes_index, "extend", "available", self.extension_factor)
 
         self.volume_details_input_list = user_input_list
         self.volumes_index = index_of_list
         self.type_of_operation = type_of_operation
         self.final_state_of_volume = final_state_of_volume
 
-
         # Wait due to async operation. Wait for the particular volume to be in available state
-        self.volumes_array_objects.append(self.async_task_wait_process_for_volume("volume",
+        # This array will affect create, clone, extend etc.
+        # So after the particular operation, this list should be cleared!
+        self.volumes_check_array_objects.append(self.async_task_wait_process_for_volume("volume",
                                           self.volume_details_input_list[self.volumes_index]['name'],
                                           self.final_state_of_volume))
 
         if self.type_of_operation == 'create':
 
             print "DEBUG1: volume_details_input_list %s"  %self.volume_details_input_list
-            print "DEBUG2: volumes_array_objects %s" % self.volumes_array_objects
+            print "DEBUG2: volumes_check_array_objects %s" % self.volumes_check_array_objects
             print "DEBUG3 : Index %s" %self.volumes_index
-            print "DEBUG4 : %s" %(self.volumes_array_objects[self.volumes_index])
+            print "DEBUG4 : %s" %(self.volumes_check_array_objects[self.volumes_index])
 
             self.inputs = [self.volume_details_input_list[self.volumes_index]['name'],
                            self.volume_details_input_list[self.volumes_index]['size'],
@@ -253,10 +260,10 @@ class VolumeOperations(object):
                            self.volume_details_input_list[self.volumes_index]['bootable_factor']]
 
             # Outputs are from the object details of the newly created volume. Both will be compared
-            self.values = [self.volumes_array_objects[self.volumes_index]['name'],
-                           self.volumes_array_objects[self.volumes_index]['size'],
-                           self.volumes_array_objects[self.volumes_index]['type'],
-                           self.volumes_array_objects[self.volumes_index]['bootable']]
+            self.values = [self.volumes_check_array_objects[self.volumes_index]['name'],
+                           self.volumes_check_array_objects[self.volumes_index]['size'],
+                           self.volumes_check_array_objects[self.volumes_index]['type'],
+                           self.volumes_check_array_objects[self.volumes_index]['bootable']]
 
         # Clone
         if (self.type_of_operation == 'clone'):
@@ -266,24 +273,27 @@ class VolumeOperations(object):
         # extend
         if (self.type_of_operation == 'extend'):
             self.extension_factor = args[0]
-            print "DEBUG1 : is %s" %self.object_index_dict.keys()
-            print "DEBUG2 : is %s" % self.object_index_dict.keys()[0]
-            print "DEBUG3 : is %s" % self.original_volume_list[self.object_index_dict.keys()[0]]
-            print "DEBUG3a : is %s" % (self.original_volume_list[self.object_index_dict.keys()[0]])['size']
-            print "DEBUG3b : is %s" % self.extension_factor
-            self.intended_extended_size = (self.original_volume_list[self.object_index_dict.keys()[0]])['size'] + self.extension_factor
+            print "DEBUG1: volume_details_input_list %s" % self.volume_details_input_list
+            print "DEBUG2: volumes_check_array_objects %s" % self.volumes_check_array_objects
+            print "DEBUG3 : Index , extension factor %s %s" % (self.volumes_index , self.extension_factor)
+            print "DEBUG4 : %s" % (self.volumes_check_array_objects[self.volumes_index])
+
+            self.intended_extended_size = (self.volume_details_input_list[self.volumes_index]['size'] + self.extension_factor)
             print "DEBUG4 : is %s" %self.intended_extended_size
-            self.inputs = [(self.original_volume_list[self.object_index_dict.keys()[0]])['name'] , self.intended_extended_size]
-            self.values = [(self.object_index_dict.values()[0])['name'],(self.object_index_dict.values()[0])['size']]
+            self.inputs = [self.volume_details_input_list[self.volumes_index]['name'] , self.intended_extended_size]
+            self.values = [self.volumes_check_array_objects[self.volumes_index]['name'],
+                           self.volumes_check_array_objects[self.volumes_index]['size']]
 
         # delete
         if(self.type_of_operation == 'delete'):
-            if self.volumes_array_objects == 0:
+            if self.volumes_check_array_objects[self.volumes_index] == 0:
                 return 0
 
         if self.values == self.inputs:
             print "\nVOLUME CHECK COMPLETED SUCCESSFULLY\n"
-            return (self.volumes_array_objects,0)
+
+            # Return only the array pertaining to the volume index. Later it will be appended
+            return (self.volumes_check_array_objects[self.volumes_index],0)
         else:
             print "\nVOLUME CHECK FAILED\n"
             print "DEBUG: INPUTS", self.inputs
@@ -327,66 +337,75 @@ class VolumeOperations(object):
         else:
             print "\n%s %s VOLUME %s NOT CLONED" %(self.type_of_source, self.input_source)
 
-    def volumes_extend(self, volume_list , volumes_name_prefix, extension_factor = 100):
+    def volumes_extend(self, volume_extend_list , extension_factor = 100):
 
-        self.volume_list = volume_list
-        self.length_volumes_array = len(self.volume_list)
+        self.volume_extend_list = volume_extend_list
+        self.length_volumes_array = len(self.volume_extend_list)
 
         self.extension_factor = extension_factor
         self.extended_volumes_details = list()
         self.extended_volumes_object_index_dict = dict()
+        self.comparison_check_parameter_extend = []
+        self.final_extended_volumes_array_objects = []
+
         print "\nDEBUG: LENGTH OF THE VOLUME ARRAY %s" %self.length_volumes_array
 
         for self.volumes_index in range(0, self.length_volumes_array):
 
             # print "\n================VOLUME EXTEND================\n"
-            self.intended_extended_size = self.volume_list[self.volumes_index]['size']  + self.extension_factor
+            self.intended_extended_size = (self.volume_extend_list[self.volumes_index])['size']  + self.extension_factor
 
-            self.list_check_output = ['openstack' , 'volume' , 'set' , '--size' , str(self.intended_extended_size), self.volume_list[self.volumes_index]['name']]
+            self.list_check_output = ['openstack' , 'volume' , 'set' , '--size' , str(self.intended_extended_size),
+                                      self.volume_extend_list[self.volumes_index]['name']]
             self.op = subprocess.check_output(self.list_check_output)
 
-            # Async task, call relevant procedure
-            self.extended_volumes_details.append(self.async_task_wait_process_for_volume("volume", self.volume_list[self.volumes_index]['name'],self.available_string))
+            self.comparison_check_parameter_extend = self.volumes_check(self.volume_extend_list, self.volumes_index,
+                                                                        "extend", "available", self.extension_factor)
 
-            print "NEW EXTENDED SIZE OF VOLUME %s IS %s" %(self.extended_volumes_details[self.volumes_index]['name'], self.extended_volumes_details[self.volumes_index]['size'])
 
-            # Creating a dictionary below to send it as an object to the volume check. Embeddint required items into the dictionary
-            self.extended_volumes_object_index_dict = {self.volumes_index : self.extended_volumes_details[self.volumes_index]}
+            # the tuple returned has the volume object in the first
+            self.final_extended_volumes_array_objects.append(self.comparison_check_parameter_extend[0])
 
-            # Check for the volume creation
-            self.comparison_check_parameter = self.volumes_check(self.extended_volumes_object_index_dict, self.volume_list , 'extend', self.extension_factor)
-            if self.comparison_check_parameter == 0:
-                print "VOLUME %s SUCCESSFULLY EXTENDED" % (self.extended_volumes_details[self.volumes_index]['name'])
+            print "NEW EXTENDED SIZE OF VOLUME %s IS %s" \
+                  %(self.final_extended_volumes_array_objects[self.volumes_index]['name'],
+                    self.final_extended_volumes_array_objects[self.volumes_index]['size'])
+
+            # Check for the return value in the tuple
+            if self.comparison_check_parameter_extend[1] == 0:
+                print "VOLUME %s SUCCESSFULLY EXTENDED" \
+                      % (self.final_extended_volumes_array_objects[self.volumes_index]['name'])
             else:
-                print "VOLUME NOT CREATED"
+                print "VOLUME NOT EXTENDED"
 
-        print "\nDEBUG: FINAL VOLUME ARRAY IS %s" % self.volumes_array_objects
-        print "\nDEBUG: FINAL VOLUME ARRAY IS WITH INDEX COUNT %s" % self.volumes_object_index_dict
+        print "\nDEBUG: FINAL EXTENDED VOLUME ARRAY IS %s" % self.final_extended_volumes_array_objects
 
-    def volumes_delete(self, volume_list, volumes_name_prefix):
+    def volumes_delete(self, volume_delete_list, volumes_name_prefix):
 
-        self.volume_list = volume_list
-        self.length_volumes_array = len(self.volume_list)
+        self.volume_delete_list = volume_delete_list
+        self.length_volumes_array = len(self.volume_delete_list)
         self.delete_number = 0
 
-        print "DEBUG1: Type of volume list" , type(volume_list)
-        print "DEBUG2 : volume list" , self.volume_list
+        print "DEBUG1: Type of volume list" , type(volume_delete_list)
+        print "DEBUG2 : volume list" , self.volume_delete_list
 
         for self.volumes_index in range(0, self.length_volumes_array):
 
-            print "\n==========DELETION OF VOLUME %s==========\n" % (self.volume_list[self.volumes_index])['name']
+            print "DEBUG3 : %s" % self.volume_delete_list[self.volumes_index]
+            print "DEBUG4 : %s" % self.volumes_index
 
-            self.list_checkOutput_delete = ['openstack' ,'volume' ,'delete' , (self.volume_list[self.volumes_index])['name']]
+            print "\n==========DELETION OF VOLUME %s==========\n" % (self.volume_delete_list[self.volumes_index])['name']
+
+            self.list_checkOutput_delete = ['openstack' ,'volume' ,'delete' , (self.volume_delete_list[self.volumes_index])['name']]
             self.op = subprocess.check_output(self.list_checkOutput_delete)
 
-            self.op_status = self.volumes_check(self.volume_list, self.volumes_index , "delete", "NA")
+            self.op_status = self.volumes_check(self.volume_delete_list, self.volumes_index , "delete", "NA")
 
             # Enter only if the volume exists
             if self.op_status == 0:
-                print "\nVOLUME %s SUCCESSFULLY DELETED" %(self.volume_list[self.volumes_index])['name']
+                print "\nVOLUME %s SUCCESSFULLY DELETED" %(self.volume_delete_list[self.volumes_index])['name']
                 self.delete_number = self.delete_number + 1
             else:
-                print "\nVOLUME %s COULD NOT BE DELETED" %(self.volume_list[self.volumes_index])['name']
+                print "\nVOLUME %s COULD NOT BE DELETED" %(self.volume_delete_list[self.volumes_index])['name']
 
         return self.delete_number
 

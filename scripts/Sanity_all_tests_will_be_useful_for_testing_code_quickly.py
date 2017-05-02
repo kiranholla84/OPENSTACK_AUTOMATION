@@ -29,7 +29,7 @@ server_name =  'qe' + '_server_' + str(time.time())# ACTION : Should be combinat
 number_of_snapshots = 1
 
 # Object instatiation [May be modularized]
-os_objects_handle_volume = VolumeOperations(bootable_factor = 'nonbootable', volumes_name_prefix = 'A998AA95', number_of_volumes=2)
+os_objects_handle_volume = VolumeOperations(bootable_factor = 'nonbootable', volumes_name_prefix = 'A9997AA95', number_of_volumes=2)
 # os_objects_handle_snapshots = SnapshotOperations(volume_list)
 # os_objects_handle_instance = InstanceOperations(volume_list)
 
@@ -38,17 +38,17 @@ print "\nMAIN SCRIPT : VOLUME CREATE..."
 non_bootable_volume_list = os_objects_handle_volume.volumes_create()
 print "\nMAIN SCRIPT : NONBOOTABLE VOLUME LIST IS %s" %non_bootable_volume_list
 
-# os_objects_handle_volume = VolumeOperations(bootable_factor = 'bootable', volumes_name_prefix = 'A998A12126_', number_of_volumes=2)
+# os_objects_handle_volume = VolumeOperations(bootable_factor = 'bootable', volumes_name_prefix = 'A9997A12126_', number_of_volumes=2)
 #
 # # MULTIPLE VOLUME CREATION
 # print "\nMAIN SCRIPT : VOLUME CREATE..."
 # bootable_volume_list = os_objects_handle_volume.volumes_create()
 # print "\nMAIN SCRIPT : BOOTABLE VOLUME LIST IS %s" %bootable_volume_list
 #
-# # # # EXTEND VOLUME
-# extend_val = os_objects_handle_volume.volumes_extend(bootable_volume_list, volumes_name_prefix = 'A998A12126_', extension_factor = 2)
-# extend_val = os_objects_handle_volume.volumes_extend(non_bootable_volume_list, volumes_name_prefix = 'A998AA95', extension_factor = 2)
-# print "\nMAIN SCRIPT : VOLUME EXTEND...%s" %(extend_val)
+# # # EXTEND VOLUME
+# extend_val = os_objects_handle_volume.volumes_extend(bootable_volume_list, extension_factor = 10)
+extend_val = os_objects_handle_volume.volumes_extend(non_bootable_volume_list, extension_factor = 20)
+print "\nMAIN SCRIPT : VOLUME EXTEND...%s" %(extend_val)
 # #
 
 # # SNAPSHOT CREATION OF UNATTACHED VOLUME
@@ -92,7 +92,7 @@ print "\nMAIN SCRIPT : NONBOOTABLE VOLUME LIST IS %s" %non_bootable_volume_list
 
 # DELETE VOLUMES
 print "\nMAIN SCRIPT : VOLUME DELETION"
-volume_delete = os_objects_handle_volume.volumes_delete(non_bootable_volume_list, volumes_name_prefix = 'A998A12125_')
+volume_delete = os_objects_handle_volume.volumes_delete(non_bootable_volume_list, volumes_name_prefix = 'A9997A12125_')
 print "DEBUG: volume_delete is %s" %volume_delete
 # volume_delete = os_objects_handle_volume.volume_delete(volume_from_snapshot)
 # volume_delete = os_objects_handle_volume.volume_delete(volume_from_volume)
