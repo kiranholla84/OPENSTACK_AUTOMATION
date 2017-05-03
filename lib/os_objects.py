@@ -100,39 +100,50 @@ class VolumeOperations(object):
             # print "\nDEBUG : RETURNING VOLUME TYPE:%s" %random.choice(self.non_replication_list)
             return random.choice(self.non_replication_list)
 
-    def async_task_wait_process_for_volume(self, type_of_object, name_of_object, final_async_state):
+    def async_task_wait_process(self, type_of_object, name_of_object, final_async_state):
+
+        self.name_of_object = name_of_object
+        self.type_of_object = type_of_object
+        self.final_async_state = final_async_state
 
         # Get the initial volume or snapshot status
-        self.op_state = self.volumes_or_snapshot_status_call(type_of_object, name_of_object)
+        self.op_state = self.volumes_or_snapshot_status_call(str.lower(self.type_of_object), self.name_of_object)
 
-        # Now wait for the state of the volume or snapshot to change to "Available"
-        if (self.op_state['status'] == final_async_state):
-            print "\nSTATUS OF THE VOLUME IS ALREADY %s STATE" %final_async_state
+        # This is if the state is already as per the final intended state
+        if (self.op_state['status'] == self.final_async_state):
+            print "\nSTATUS OF THE %s IS ALREADY %s STATE" %(self.type_of_object,self.final_async_state)
             return self.op_state
         else:
-            while (self.op_state['status'] != final_async_state):
+            # Now wait for the state of the volume or snapshot to change to "Available"
+            while (self.op_state['status'] != self.final_async_state):
 
                 # Sometimes the status may go to error. If that is the case return the message to the yser
                 if self.op_state['status'].lower == 'error' or self.op_state['status'].lower == 'error_deleting':
-                    print "\nFAILURE IN VOLUME/SNAPSHOT %s ASYNC OPERATION. EXITING" % name_of_object
+                    print "\nFAILURE IN VOLUME/SNAPSHOT %s ASYNC OPERATION. EXITING" % self.name_of_object
                     break
                 elif (self.op_state['status'].lower == 'deleting'):
-                    print "\nWAITING FOR VOLUME/SNAPSHOT %s TO BE DELETED. CURRENTLY VOLUME STATE IS IN %s\n" % (self.op_state['name'], self.op_state['status'])
+                    print "\nWAITING FOR VOLUME/SNAPSHOT %s TO BE DELETED. CURRENTLY VOLUME STATE IS IN %s\n" \
+                          % (self.op_state['name'], self.op_state['status'])
                 else:
-                    print "\nWAITING FOR STATUS OF THE VOLUME/SNAPSHOT %s TO BE IN %s STATE..\nCURRENTLY VOLUME STATE IS IN %s STATE\n" % (
-                    name_of_object, final_async_state, self.op_state['status'])
+                    # This is for extending, attaching, snapshot creation
+                    print "\nWAITING FOR STATUS OF THE VOLUME/SNAPSHOT %s TO BE IN %s STATE..\nCURRENTLY VOLUME " \
+                          "STATE IS IN %s STATE\n" % (
+                    self.name_of_object, self.final_async_state, self.op_state['status'])
 
                 time.sleep(15)
 
-                # This is to get the latest status dynamically
-                self.op_state = self.volumes_or_snapshot_status_call(type_of_object, name_of_object)
+                # This is to get the latest status dynamically from CLI
+                self.op_state = self.volumes_or_snapshot_status_call(str.lower(self.type_of_object),
+                                                                     self.name_of_object)
 
                 # This will be entered if delete volume is the async operation
                 if self.op_state == 1:
-                    print "%s WITH NAME %s SUCCESSFULLY DELETED" % (type_of_object, name_of_object)
+                    print "%s WITH NAME %s SUCCESSFULLY DELETED" % (self.type_of_object, self.name_of_object)
                     return 0
-                elif self.op_state['status'] == final_async_state:
-                    print "\nSTATUS OF THE %s %s NOW IS IN %s STATE..\n" % (type_of_object, name_of_object, self.op_state['status'])
+                # This is for the remaining states
+                elif self.op_state['status'] == self.final_async_state:
+                    print "\nSTATUS OF THE %s %s NOW IS IN %s STATE..\n" % (self.type_of_object, self.name_of_object,
+                                                                            self.op_state['status'])
                     return self.op_state
                 else:
                     pass
@@ -243,7 +254,7 @@ class VolumeOperations(object):
         # Wait due to async operation. Wait for the particular volume to be in available state
         # This array will affect create, clone, extend etc.
         # So after the particular operation, this list should be cleared!
-        self.volumes_check_array_objects.append(self.async_task_wait_process_for_volume("volume",
+        self.volumes_check_array_objects.append(self.async_task_wait_process("volume",
                                           self.volume_details_input_list[self.volumes_index]['name'],
                                           self.final_state_of_volume))
 
@@ -328,7 +339,7 @@ class VolumeOperations(object):
         op = loads(op)
 
         # WAIT FOR ASYNC OPERATION TO COMPLETE
-        op = self.async_task_wait_process_for_volume("volume", op['name'], self.available_string)
+        op = self.async_task_wait_process("volume", op['name'], self.available_string)
 
         # Check for the volume creation
         self.comparison_check_parameter = self.volumes_check(self.op)
@@ -379,7 +390,7 @@ class VolumeOperations(object):
 
         print "\nDEBUG: FINAL EXTENDED VOLUME ARRAY IS %s" % self.final_extended_volumes_array_objects
 
-    def volumes_delete(self, volume_delete_list, volumes_name_prefix):
+    def volumes_delete(self, volume_delete_list):
 
         self.volume_delete_list = volume_delete_list
         self.length_volumes_array = len(self.volume_delete_list)
@@ -410,81 +421,11 @@ class VolumeOperations(object):
         return self.delete_number
 
 class SnapshotOperations(object):
-    def __init__(self, volumes_list, **kwargs):
 
-        def async_task_wait_process_for_snapshot(self, type_of_object, name_of_object, final_async_state):
+        def snapshots_check(self, snapshot_names_object_list, volume_names_object_list, type_of_operation="create"):
 
-            # Get the initial volume or snapshot status
-            self.op_state = self.volumes_or_snapshot_status_call(type_of_object, name_of_object)
-
-            # Now wait for the state of the volume or snapshot to change to "Available"
-            if (self.op_state['status'] == final_async_state):
-                print "\nSTATUS OF THE SNAPSHOT IS ALREADY %s STATE" % final_async_state
-                return self.op_state
-            else:
-                while (self.op_state['status'] != final_async_state):
-
-                    # Sometimes the status may go to error. If that is the case return the message to the yser
-                    if (self.op_state['status'].lower == 'error'):
-                        print "\nFAILURE IN SNAPSHOT %s ASYNC OPERATION. EXITING" % name_of_object
-                        break
-                    elif (self.op_state['status'].lower == 'deleting'):
-                        print "\nWAITING FOR SNAPSHOT %s TO BE DELETED. CURRENTLY SNAPSHOT STATE IS IN %s\n" % (
-                        self.op_state['name'], self.op_state['status'])
-                    else:
-                        print "\nWAITING FOR STATUS OF THE SNAPSHOT %s TO BE IN %s STATE..\nCURRENTLY SNAPSHOT STATE IS IN %s STATE\n" % (
-                            name_of_object, final_async_state, self.op_state['status'])
-
-                    time.sleep(15)
-
-                    # This is to get the latest status dynamically
-                    self.op_state = self.volumes_or_snapshot_status_call(type_of_object, name_of_object)
-
-                    # This will be entered if delete volume is the async operation
-                    if self.op_state == 1:
-                        print "%s WITH NAME %s SUCCESSFULLY DELETED" % (type_of_object, name_of_object)
-                        return 0
-                    elif self.op_state['status'] == final_async_state:
-                        print "\nSTATUS OF THE %s %s NOW IS IN %s STATE..\n" % (
-                        type_of_object, name_of_object, self.op_state['status'])
-                        return self.op_state
-                    else:
-                        pass
-
-        def volumes_snapshot_create(self, volume_list , number_of_snapshots=1):
-
-            self.volume_list = volume_list
-            self.length_volumes_array = len(self.volume_list)
-            self.snapshot_name_prefix = 'snapshot_'
-
-            for self.volumes_index in range(0, self.length_volumes_array):
-                # print "\n================CREATION OF VOLUME SNAPSHOT================\n"
-                self.snapshot_name = "snapshot" + "_" + (self.volume_list[self.volumes_index])['name']
-                self.snapshot_description = "THIS IS THE DESCRIPTION OF SNAPSHOT %s" % (self.snapshot_name)
-                self.snapshot_name.append((self.snapshot_name_prefix + str(self.volumes_index)))
-
-                #
-                list_check_output = ['openstack', 'volume', 'snapshot', 'create', "--volume", (self.volume_list[self.volumes_index])['name'], "--description",
-                                     self.snapshot_description, self.snapshot_name]
-                self.op_snaps_vol_create = subprocess.check_output(list_check_output)
-
-                create_snapshot_operation = self.volumes_snapshot_check(self.snapshot_name, (self.volume_list[self.volumes_index])['name'])
-                print "CREATE SNAPSHOT OPERATION RESULTED IN ", create_snapshot_operation
-                return create_snapshot_operation
-
-        def volumes_snapshot_delete(self, snapshot_name):
-
-            print "\n================DELETION OF VOLUME SNAPSHOT %s ================\n" % (snapshot_name)
-            list_check_output = ['openstack', 'volume', 'snapshot', 'delete', str(snapshot_name), '--force']
-            op_snaps_vol_create = subprocess.check_output(list_check_output)
-            delete_snapshot_operation = self.volumes_snapshot_check(snapshot_name)
-
-            print "DELETE SNAPSHOT OPERATION RESULTED IN ", delete_snapshot_operation
-
-        def volumes_snapshot_check(self, snapshot_name, volume_name, type_of_operation):
-
-            self.snapshot_name = snapshot_name
-            self.volume_name = volume_name
+            self.snapshot_names = snapshot_names_object_list
+            self.volume_names = volume_names_object_list
             self.type_of_operation = type_of_operation
 
             if self.type_of_operation == "create":
@@ -493,23 +434,123 @@ class SnapshotOperations(object):
                 self.final_async_state = "NR"
 
             # print "\n================VOLUME SNAPSHOT CREATION CHECK================\n"
-            self.snapshot_state = async_task_wait_process_for_snapshot("snapshot", self.snapshot_name, self.final_async_state)
+            # Use the composition concept here, call the function async_task_wait_process within
+            # VolumeOperations class
+            self.snapshot_state_check = self.VolumeOperations.async_task_wait_process("SNAPSHOT", self.snapshot_name,
+                                                                                      self.final_async_state)
 
-            # else part will be entered when create is called
-            if self.snapshot_state == 0:
+            # else part will be entered when create is called, this is for delete call
+            if self.snapshot_state_check == 0:
                 # Do nothing as the above variable belongs to delete call
-                pass
+                return 0
             else:
-                self.values = [self.snapshot_state['id'], self.snapshot_state['name'], self.snapshot_state['status'], self.snapshot_state['size_vol'], self.snapshot_state['snapshot_description']]
-                self.inputs = [self.op_snaps_vol_show['volumes_id'], self.op_snaps_vol_show['name'], self.op_snaps_vol_show['status'], self.op_snaps_vol_show['size'], self.op_snaps_vol_show['description']]
+                self.values = [ self.snapshot_state_check['name'],
+                               self.snapshot_state_check['status'],
+                               self.snapshot_state_check['size'],
+                                self.snapshot_state_check['volume_id'],
+                               self.snapshot_state_check['description']]
+                self.inputs = [self.snapshot_names['name'],
+                               self.available_string,
+                               self.volume_names['size'],
+                               self.volume_names['ID'],
+                               self.snapshot_names['snapshot_description']]
 
-                # ACTION REQUIRED : THIS CAN BE MODULARIZED
-                if values == inputs:
-                    print "\nVOLUME SNAPSHOTTED SUCCESSFULLY\n"
-                    return snapshot_name
-                else:
-                    print "VALUES", values
-                    print "INPUTS", inputs
+            # Compare the inputs to the created snapshot
+            if self.values == self.inputs:
+                print "\nVOLUME %s SNAPSHOTTED SUCCESSFULLY" %self.volume_name['name']
+                return self.snapshot_names['name']
+            else:
+                print "VALUES", self.values
+                print "INPUTS", self.inputs
+
+        def snapshots_create(self, volume_list_for_snapshots, number_of_snapshot_per_volume = 2):
+
+            self.volume_list_for_snapshots = volume_list_for_snapshots
+            self.length_volumes_array = len(self.volume_list_for_snapshots)
+            self.snapshot_name_prefix = 'snapshot_'
+            self.number_of_snapshot_per_volume = number_of_snapshot_per_volume
+            self.list_of_snapshots_for_volume = []
+
+
+            # Creating list of lists, each inner list having dictionaries of snapshot infromation
+            for self.volumes_index in range(0, self.length_volumes_array):
+
+                for self.snap_index in range(0, self.number_of_snapshot_per_volume):
+
+                    # Create a dictionary of values for each input snapshot  having common properties but
+                    # different values
+                    self.snap_details = {'name': self.snapshot_name_prefix +
+                                                   self.volume_list_for_snapshots[self.volumes_index]['name'] +
+                                                   str(self.snap_index),
+                                           'source_volume_name': self.volume_list_for_snapshots[self.volumes_index]
+                                           ['name'],
+                                           'snapshot_description': "THIS IS SNAPSHOT %s"
+                                                                   %(self.snapshot_name_prefix +
+                                                                     self.volume_list_for_snapshots[self.volumes_index]
+                                                                     ['name'] +
+                                                                     str(self.snap_index)),
+                                           }
+
+
+                # Creating list of lists here - the inner list will be for snapshots for a single volume,
+                self.snap_details_input_list.append(self.snap_details)
+
+            # Appending inner list to outer list for list of lists
+            self.list_of_snapshots_for_volume.append(self.snap_details_input_list)
+
+            # Inner list needs to be initialized for every new volume as it holds snapshot dictionaries of every new
+            # volume
+            self.snap_details_input_list = []
+
+            for self.volumes_index in range(0, self.length_volumes_array):
+                for self.snap_index in range(0, self.number_of_snapshot_per_volume):
+                    print "\n================CREATING SNAPSHOT WITH NAME %s FOR VOLUME %s ================\n" \
+                          %(self.list_of_snapshots_for_volume[self.volumes_index][self.snap_index]['name'],
+                            self.volume_list_for_snapshots[self.volumes_index]['name'])
+
+                # Snapshot command
+                self.list_check_output_snap_create = ['openstack', 'volume', 'snapshot', 'create', "--volume",
+                                     self.volume_list_for_snapshots[self.volumes_index]['name'], "--description",
+                                     self.list_of_snapshots_for_volume[self.volumes_index][self.snap_index]
+                                                      ['description'],
+                                     self.list_of_snapshots_for_volume[self.volumes_index][self.snap_index]['name'],
+                                                      '--force' ]
+
+                self.snap_create = subprocess.check_output(self.list_check_output_snap_create)
+
+                # Sending the snapshot object & volume name for checking if snapshot is created
+                self.create_snapshot_operation = self.snapshots_check\
+                    (self.list_of_snapshots_for_volume[self.volumes_index][self.snap_index],
+                     (self.volume_list_for_snapshots[self.volumes_index]))
+
+                print "CREATE SNAPSHOT OPERATION RESULTED IN ", self.create_snapshot_operation
+                return self.create_snapshot_operation
+
+        def volumes_snapshot_delete(self, volume_list_for_snapshots, number_of_snapshot_per_volume = 2):
+
+            self.volume_list_for_snapshots = volume_list_for_snapshots
+            self.length_volumes_array = len(self.volume_list_for_snapshots)
+            self.snapshot_name_prefix = 'snapshot_'
+            self.number_of_snapshot_per_volume = number_of_snapshot_per_volume
+            self.list_of_snapshots_for_volume = []
+
+            for self.volumes_index in range(0, self.length_volumes_array):
+                for self.snap_index in range(0, self.number_of_snapshot_per_volume):
+                    print "\n================DELETING SNAPSHOT WITH NAME %s FOR VOLUME %s ================\n" \
+                          % (self.list_of_snapshots_for_volume[self.volumes_index][self.snap_index]['name'],
+                             self.volume_list_for_snapshots[self.volumes_index]['name'])
+                    self.list_check_output_delete = ['openstack', 'volume', 'snapshot', 'delete',
+                                 self.list_of_snapshots_for_volume[self.volumes_index][self.snap_index]['name'],
+                                 '--force']
+
+                    self.op_snaps_vol_delete = subprocess.check_output(self.list_check_output_delete)
+                    self.delete_snapshot_operation = self.snapshots_check \
+                        (self.list_of_snapshots_for_volume[self.volumes_index][self.snap_index],
+                         (self.volume_list_for_snapshots[self.volumes_index]),"delete")
+                    self.delete_snapshot_operation = self.volumes_snapshot_check(snapshot_name)
+
+            print "DELETE SNAPSHOT OPERATION RESULTED IN ", self.delete_snapshot_operation
+
 
 class InstanceOperations(object):
     def __init__(self, server_name, image_name, flavour, **kwargs):
