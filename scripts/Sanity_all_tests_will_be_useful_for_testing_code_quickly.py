@@ -23,13 +23,14 @@ volume_available_string = 'available'
 server_available_string = 'ACTIVE'
 bootable_string = 'true'
 non_rep_vol_type = 'VMAX_SILVER'
+# number_of_snapshot_per_volume = 3
 # volume_name = 'qe_' + non_rep_vol_type + '_' + str(time.time()) # ACTION : Should be combination of testname, qe, volume,  timestamp of creation
 
 server_name =  'qe' + '_server_' + str(time.time())# ACTION : Should be combination of testname, qe, server, timestamp of creation
 number_of_snapshots = 1
 
 # Object instatiation [May be modularized]
-os_objects_handle_volume = VolumeOperations(bootable_factor = 'nonbootable', volumes_name_prefix = 'INDAA95', number_of_volumes=2)
+os_objects_handle_volume = VolumeOperations(bootable_factor = 'nonbootable', volumes_name_prefix = 'INDAA990_l99', number_of_volumes=2)
 
 # MULTIPLE VOLUME CREATION
 print "\nMAIN SCRIPT : VOLUME CREATE..."
@@ -39,7 +40,7 @@ print "\nMAIN SCRIPT : NONBOOTABLE VOLUME LIST IS %s" %non_bootable_volume_list
 # Object Instantiation
 os_objects_handle_snapshots = SnapshotOperations()
 
-# os_objects_handle_volume = VolumeOperations(bootable_factor = 'bootable', volumes_name_prefix = 'INDAA95', number_of_volumes=2)
+# os_objects_handle_volume = VolumeOperations(bootable_factor = 'bootable', volumes_name_prefix = 'INDAA96', number_of_volumes=2)
 # bootable_volume_list = os_objects_handle_volume.volumes_create()
 # print "\nMAIN SCRIPT : NONBOOTABLE VOLUME LIST IS %s" %bootable_volume_list
 
@@ -56,7 +57,13 @@ os_objects_handle_snapshots = SnapshotOperations()
 
 # SNAPSHOT CREATION OF UNATTACHED VOLUMES
 print "\nMAIN SCRIPT : SNAPSHOT CREATE..."
-snapshot_name = os_objects_handle_snapshots.snapshots_create(non_bootable_volume_list, number_of_snapshots=3)
+snapshot_name_dict = os_objects_handle_snapshots.snapshots_create(non_bootable_volume_list, number_of_snapshot_per_volume=3)
+
+# print the list of volume:snapshot pairs
+for volumes, snapshots in snapshot_name_dict.iteritems():
+    print "\nVOLUME %s" % volumes
+    print "\nSNAPSHOTS %s" % snapshots
+
 #
 # # INSTANCE CREATION
 # os_objects_handle_server = InstanceOperations(server_name,image,flavor)
@@ -89,7 +96,8 @@ snapshot_name = os_objects_handle_snapshots.snapshots_create(non_bootable_volume
 #
 # DELETE SNAPSHOTS
 print "\nMAIN SCRIPT : VOLUME SNAPSHOT DELETION"
-snapshot_delete = os_objects_handle_volume.volume_snapshot_delete(non_bootable_volume_list, number_of_snapshots=3)
+snapshot_delete = os_objects_handle_snapshots.snapshots_delete(non_bootable_volume_list, snapshot_name_dict, number_of_snapshot_per_volume=3)
+print "DEBUG: snapshot delete is %s" %snapshot_delete
 # snapshot_delete = os_objects_handle_volume.volume_snapshot_delete(snapshot_name_1)
 # snapshot_delete = os_objects_handle_volume.volume_snapshot_delete(snapshot_name_2)
 

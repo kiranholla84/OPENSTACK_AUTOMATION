@@ -19,11 +19,11 @@
   <component name="ExecutionTargetManager" SELECTED_TARGET="default_target" />
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="os_objects.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="os_objects.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/lib/os_objects.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="323">
-              <caret line="528" column="35" lean-forward="false" selection-start-line="528" selection-start-column="12" selection-end-line="528" selection-end-column="35" />
+            <state relative-caret-position="278">
+              <caret line="254" column="21" lean-forward="false" selection-start-line="254" selection-start-column="4" selection-end-line="254" selection-end-column="21" />
               <folding>
                 <element signature="e#0#17#0" expanded="true" />
               </folding>
@@ -34,20 +34,21 @@
       <file leaf-file-name="test.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/lib/test.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="266">
-              <caret line="32" column="70" lean-forward="true" selection-start-line="32" selection-start-column="70" selection-end-line="32" selection-end-column="70" />
+            <state relative-caret-position="391">
+              <caret line="23" column="43" lean-forward="false" selection-start-line="23" selection-start-column="43" selection-end-line="23" selection-end-column="43" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Sanity_all_tests_will_be_useful_for_testing_code_quickly.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="Sanity_all_tests_will_be_useful_for_testing_code_quickly.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/scripts/Sanity_all_tests_will_be_useful_for_testing_code_quickly.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="475">
-              <caret line="89" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="108" selection-end-column="0" />
+            <state relative-caret-position="704">
+              <caret line="116" column="0" lean-forward="true" selection-start-line="116" selection-start-column="0" selection-end-line="116" selection-end-column="0" />
               <folding>
                 <element signature="e#0#17#0" expanded="true" />
+                <marker date="1493968439779" expanded="true" signature="840:1150" ph="..." />
               </folding>
             </state>
           </provider>
@@ -105,68 +106,68 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>A999</find>
-      <find>def vol</find>
-      <find>A991</find>
-      <find>volumes_array_objects</find>
-      <find>self.volumes_array_objects</find>
-      <find>A992</find>
-      <find>def vo</find>
-      <find>def volumes_create</find>
-      <find>self.comparison_check_parameter</find>
-      <find>volume_extend_list</find>
-      <find>volumes_Exte</find>
-      <find>def volumes_chec</find>
-      <find>A994</find>
-      <find>volumes_exte</find>
+      <find>volumes_or_snapshot_status_call</find>
       <find>def asy</find>
-      <find>def volumes_ex</find>
-      <find>volumes_chec</find>
-      <find>A995</find>
-      <find>def volumes_creat</find>
-      <find>A996</find>
-      <find>def</find>
-      <find>A9997</find>
-      <find>def volumes_de</find>
-      <find>def volumes_snap</find>
-      <find>def sna</find>
-      <find>self.</find>
-      <find>async_task_wait_process_for_volume</find>
-      <find>def async_task_wait_process_for_volume</find>
-      <find>'show'</find>
+      <find>INDAA99A</find>
+      <find>INDAA99C</find>
+      <find>INDAA99D</find>
+      <find>def volumes_or_snapshot_status_call</find>
+      <find>INDAA99E</find>
+      <find>snapshots_cr</find>
+      <find>INDAA99H</find>
+      <find>INDAA99I</find>
+      <find>INDAA99k</find>
+      <find>INDAA99L</find>
+      <find>INDAA99m</find>
+      <find>async_task_wait_process</find>
+      <find>INDAA99n</find>
+      <find>INDAA99o</find>
+      <find>def snapshots_cr</find>
+      <find>99op</find>
+      <find>def snapshots_cre</find>
+      <find>def volume_snapshot_delete</find>
+      <find>def snapshots_check</find>
+      <find>990l</find>
+      <find>990_o</find>
+      <find>990_l</find>
+      <find>990_lk</find>
+      <find>990_lm</find>
       <find>snapshots_check</find>
+      <find>volumes_che</find>
+      <find>def volumes_che</find>
+      <find>990_ln</find>
     </findStrings>
     <replaceStrings>
-      <replace>IND21</replace>
-      <replace>IND22</replace>
-      <replace>IND23</replace>
-      <replace>IND24</replace>
-      <replace>IND25</replace>
-      <replace>INDA1</replace>
-      <replace>INDA12</replace>
-      <replace>INDAA8</replace>
-      <replace>INDAA6</replace>
-      <replace>INDAA7</replace>
-      <replace>INDAA91</replace>
-      <replace>INDAA92</replace>
-      <replace>INDAA93</replace>
-      <replace>INDAA94</replace>
-      <replace>INDAA95</replace>
-      <replace>ANA</replace>
-      <replace>A00</replace>
-      <replace>A99</replace>
-      <replace>A98</replace>
-      <replace>A998</replace>
-      <replace>A999</replace>
-      <replace>A991</replace>
-      <replace>A992</replace>
-      <replace>A993</replace>
-      <replace>volumes_</replace>
       <replace>A995</replace>
       <replace>A996</replace>
       <replace>A9996</replace>
       <replace>IND</replace>
       <replace>A994</replace>
+      <replace>INDAA98</replace>
+      <replace>INDAA95</replace>
+      <replace>INDAA96</replace>
+      <replace>INDAA997</replace>
+      <replace>INDAA998</replace>
+      <replace>INDAA99</replace>
+      <replace>INDAA99A</replace>
+      <replace>INDAA99C</replace>
+      <replace>INDAA99D</replace>
+      <replace>INDAA99E</replace>
+      <replace>INDAA99H</replace>
+      <replace>INDAA99I</replace>
+      <replace>INDAA99K</replace>
+      <replace>INDAA99L</replace>
+      <replace>INDAA99m</replace>
+      <replace>INDAA99n</replace>
+      <replace>INDAA99o</replace>
+      <replace>INDAA99op</replace>
+      <replace>990l</replace>
+      <replace>990_o</replace>
+      <replace>990_l</replace>
+      <replace>990_lk</replace>
+      <replace>990_lm</replace>
+      <replace>990_ln</replace>
+      <replace>990_l99</replace>
     </replaceStrings>
   </component>
   <component name="Git.Settings">
@@ -188,8 +189,10 @@
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="width" value="1280" />
-    <option name="height" value="984" />
+    <option name="x" value="-8" />
+    <option name="y" value="-8" />
+    <option name="width" value="1296" />
+    <option name="height" value="1000" />
   </component>
   <component name="ProjectView">
     <navigator proportions="" version="1">
@@ -439,26 +442,26 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="0" width="1280" height="984" extended-state="0" />
+    <frame x="-8" y="-8" width="1296" height="1000" extended-state="6" />
     <editor active="true" />
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="7.9113926E-4" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32935917" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32685715" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.010285715" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32685715" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="7.9113926E-4" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.010285715" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
     </layout>
   </component>
   <component name="VcsContentAnnotationSettings">
@@ -872,26 +875,27 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/lib/test.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="266">
-          <caret line="32" column="70" lean-forward="true" selection-start-line="32" selection-start-column="70" selection-end-line="32" selection-end-column="70" />
+        <state relative-caret-position="391">
+          <caret line="23" column="43" lean-forward="false" selection-start-line="23" selection-start-column="43" selection-end-line="23" selection-end-column="43" />
           <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/lib/os_objects.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="323">
-          <caret line="528" column="35" lean-forward="false" selection-start-line="528" selection-start-column="12" selection-end-line="528" selection-end-column="35" />
-          <folding>
-            <element signature="e#0#17#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/scripts/Sanity_all_tests_will_be_useful_for_testing_code_quickly.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="475">
-          <caret line="89" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="108" selection-end-column="0" />
+        <state relative-caret-position="704">
+          <caret line="116" column="0" lean-forward="true" selection-start-line="116" selection-start-column="0" selection-end-line="116" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#17#0" expanded="true" />
+            <marker date="1493968439779" expanded="true" signature="840:1150" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lib/os_objects.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="278">
+          <caret line="254" column="21" lean-forward="false" selection-start-line="254" selection-start-column="4" selection-end-line="254" selection-end-column="21" />
           <folding>
             <element signature="e#0#17#0" expanded="true" />
           </folding>
