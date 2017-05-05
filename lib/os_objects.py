@@ -42,11 +42,10 @@ class VolumeOperations(object):
 
         try:
             if self.type_of_object == "volume":
-                op = subprocess.check_output(['openstack', 'volume', 'show', self.name_of_object, '-f', 'json'])
+                op = subprocess.check_output(['openstack', 'volume', 'show', self.name_of_object['name'], '-f', 'json'])
             elif self.type_of_object == "snapshot":
                 op = subprocess.check_output(['openstack', 'snapshot', 'show', self.name_of_object['name'], '-f',
                                                'json'])
-
             else:
                 print "INVALID OBJECT TYPE, EXITING"
 
@@ -108,15 +107,15 @@ class VolumeOperations(object):
         self.name_of_object = name_of_object
         self.final_async_state = final_async_state
 
-        print "DEBUG : name_of_object type_of_object final_async_state %s %s %s" \
-              %(name_of_object, type_of_object, final_async_state)
+        # print "DEBUG : name_of_object type_of_object final_async_state %s %s %s" \
+        #       %(name_of_object, type_of_object, final_async_state)
 
         # Get the initial volume or snapshot status
         self.op_state = self.volumes_or_snapshot_status_call(str.lower(self.type_of_object), self.name_of_object)
 
         # Check if the volume is already deleted OR does not exist
         if self.op_state == 1:
-            print "%s WITH NAME %s SUCCESSFULLY DELETED/DOES NOT EXIST" % (self.type_of_object, self.name_of_object)
+            print "%s WITH NAME %s SUCCESSFULLY DELETED/DOES NOT EXIST" % (self.type_of_object, self.name_of_object['name'])
             return 0
 
         # This is if the state is already as per the final intended state
@@ -129,7 +128,7 @@ class VolumeOperations(object):
 
                 # Sometimes the status may go to error. If that is the case return the message to the yser
                 if self.op_state['status'].lower == 'error' or self.op_state['status'].lower == 'error_deleting':
-                    print "\nFAILURE IN VOLUME/SNAPSHOT %s ASYNC OPERATION. EXITING" % self.name_of_object
+                    print "\nFAILURE IN VOLUME/SNAPSHOT %s ASYNC OPERATION. EXITING" % self.name_of_object['name']
                     break
                 elif (self.op_state['status'].lower == 'deleting'):
                     print "\nWAITING FOR VOLUME/SNAPSHOT %s TO BE DELETED. CURRENTLY VOLUME/SNAPSHOT STATE IS IN %s\n" \
@@ -138,7 +137,7 @@ class VolumeOperations(object):
                     # This is for extending, attaching, snapshot creation
                     print "\nWAITING FOR STATUS OF THE VOLUME/SNAPSHOT %s TO BE IN %s STATE..\nCURRENTLY VOLUME/SNAPSHOT " \
                           "STATE IS IN %s STATE\n" % (
-                    self.name_of_object, self.final_async_state, self.op_state['status'])
+                    self.name_of_object['name'], self.final_async_state, self.op_state['status'])
 
                 time.sleep(15)
 
@@ -265,7 +264,7 @@ class VolumeOperations(object):
         # This array will affect create, clone, extend etc.
         # So after the particular operation, this list should be cleared!
         self.volumes_check_array_objects.append(self.async_task_wait_process("volume",
-                                          self.volume_details_input_list[self.volumes_index]['name'],
+                                          self.volume_details_input_list[self.volumes_index],
                                           self.final_state_of_volume))
 
         if self.type_of_operation == 'create':

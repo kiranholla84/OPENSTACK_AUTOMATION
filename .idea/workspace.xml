@@ -19,11 +19,11 @@
   <component name="ExecutionTargetManager" SELECTED_TARGET="default_target" />
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="os_objects.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="os_objects.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/lib/os_objects.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="278">
-              <caret line="254" column="21" lean-forward="false" selection-start-line="254" selection-start-column="4" selection-end-line="254" selection-end-column="21" />
+            <state relative-caret-position="482">
+              <caret line="130" column="112" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="760" selection-end-column="0" />
               <folding>
                 <element signature="e#0#17#0" expanded="true" />
               </folding>
@@ -41,14 +41,14 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Sanity_all_tests_will_be_useful_for_testing_code_quickly.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="Sanity_all_tests_will_be_useful_for_testing_code_quickly.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/scripts/Sanity_all_tests_will_be_useful_for_testing_code_quickly.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="704">
-              <caret line="116" column="0" lean-forward="true" selection-start-line="116" selection-start-column="0" selection-end-line="116" selection-end-column="0" />
+            <state relative-caret-position="115">
+              <caret line="23" column="24" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="116" selection-end-column="0" />
               <folding>
                 <element signature="e#0#17#0" expanded="true" />
-                <marker date="1493968439779" expanded="true" signature="840:1150" ph="..." />
+                <marker date="1493972391191" expanded="true" signature="840:1149" ph="..." />
               </folding>
             </state>
           </provider>
@@ -106,10 +106,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>volumes_or_snapshot_status_call</find>
-      <find>def asy</find>
-      <find>INDAA99A</find>
-      <find>INDAA99C</find>
       <find>INDAA99D</find>
       <find>def volumes_or_snapshot_status_call</find>
       <find>INDAA99E</find>
@@ -136,10 +132,12 @@
       <find>volumes_che</find>
       <find>def volumes_che</find>
       <find>990_ln</find>
+      <find>INDAA990_l99</find>
+      <find>def volumes_check</find>
+      <find>volumes_or_snapshot_status_call</find>
+      <find>AA_qe_</find>
     </findStrings>
     <replaceStrings>
-      <replace>A995</replace>
-      <replace>A996</replace>
       <replace>A9996</replace>
       <replace>IND</replace>
       <replace>A994</replace>
@@ -168,6 +166,8 @@
       <replace>990_lm</replace>
       <replace>990_ln</replace>
       <replace>990_l99</replace>
+      <replace>AA_qe_</replace>
+      <replace>AA_qe_1</replace>
     </replaceStrings>
   </component>
   <component name="Git.Settings">
@@ -881,23 +881,23 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/scripts/Sanity_all_tests_will_be_useful_for_testing_code_quickly.py">
+    <entry file="file://$PROJECT_DIR$/lib/os_objects.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="704">
-          <caret line="116" column="0" lean-forward="true" selection-start-line="116" selection-start-column="0" selection-end-line="116" selection-end-column="0" />
+        <state relative-caret-position="482">
+          <caret line="130" column="112" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="760" selection-end-column="0" />
           <folding>
             <element signature="e#0#17#0" expanded="true" />
-            <marker date="1493968439779" expanded="true" signature="840:1150" ph="..." />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/lib/os_objects.py">
+    <entry file="file://$PROJECT_DIR$/scripts/Sanity_all_tests_will_be_useful_for_testing_code_quickly.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="278">
-          <caret line="254" column="21" lean-forward="false" selection-start-line="254" selection-start-column="4" selection-end-line="254" selection-end-column="21" />
+        <state relative-caret-position="115">
+          <caret line="23" column="24" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="116" selection-end-column="0" />
           <folding>
             <element signature="e#0#17#0" expanded="true" />
+            <marker date="1493972391191" expanded="true" signature="840:1149" ph="..." />
           </folding>
         </state>
       </provider>

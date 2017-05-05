@@ -30,7 +30,7 @@ server_name =  'qe' + '_server_' + str(time.time())# ACTION : Should be combinat
 number_of_snapshots = 1
 
 # Object instatiation [May be modularized]
-os_objects_handle_volume = VolumeOperations(bootable_factor = 'nonbootable', volumes_name_prefix = 'INDAA990_l99', number_of_volumes=2)
+os_objects_handle_volume = VolumeOperations(bootable_factor = 'nonbootable', volumes_name_prefix = 'AA_qe_22222', number_of_volumes=2)
 
 # MULTIPLE VOLUME CREATION
 print "\nMAIN SCRIPT : VOLUME CREATE..."
