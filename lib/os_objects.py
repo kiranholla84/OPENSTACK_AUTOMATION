@@ -147,7 +147,7 @@ class VolumeOperations(object):
 
                 # This will be entered if delete volume is the async operation
                 if self.op_state == 1:
-                    print "%s WITH NAME %s SUCCESSFULLY DELETED" % (self.type_of_object, self.name_of_object)
+                    print "%s WITH NAME %s SUCCESSFULLY DELETED" % (self.type_of_object, self.name_of_object['name'])
                     return 0
                 # This is for the remaining states
                 elif self.op_state['status'] == self.final_async_state:
@@ -405,13 +405,13 @@ class VolumeOperations(object):
         self.length_volumes_array = len(self.volume_delete_list)
         self.delete_number = 0
 
-        print "DEBUG1: Type of volume list" , type(volume_delete_list)
-        print "DEBUG2 : volume list" , self.volume_delete_list
+        # print "DEBUG1: Type of volume list" , type(volume_delete_list)
+        # print "DEBUG2 : volume list" , self.volume_delete_list
 
         for self.volumes_index in range(0, self.length_volumes_array):
 
-            print "DEBUG3 : %s" % self.volume_delete_list[self.volumes_index]
-            print "DEBUG4 : %s" % self.volumes_index
+            # print "DEBUG3 : %s" % self.volume_delete_list[self.volumes_index]
+            # print "DEBUG4 : %s" % self.volumes_index
 
             print "\n==========DELETION OF VOLUME %s==========\n" % (self.volume_delete_list[self.volumes_index])['name']
 
@@ -570,9 +570,9 @@ class SnapshotOperations(object):
                 self.created_snapshots_list_for_one_volume_per_volume_index = []
 
             # print the list of volume:snapshot pairs
-            for volumes,snapshots in self.volume_snapshot_mapping_dict.iteritems():
-                print "\nVOLUME %s" %volumes
-                print "\nSNAPSHOTS %s" %snapshots
+            # for volumes,snapshots in self.volume_snapshot_mapping_dict.iteritems():
+            #     print "\nVOLUME %s" %volumes
+            #     print "\nSNAPSHOTS %s" %snapshots
 
             return self.volume_snapshot_mapping_dict
 
