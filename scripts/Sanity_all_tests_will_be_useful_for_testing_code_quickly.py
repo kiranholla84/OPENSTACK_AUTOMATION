@@ -23,46 +23,62 @@ volume_available_string = 'available'
 server_available_string = 'ACTIVE'
 bootable_string = 'true'
 non_rep_vol_type = 'VMAX_SILVER'
-# number_of_snapshot_per_volume = 3
-# volume_name = 'qe_' + non_rep_vol_type + '_' + str(time.time()) # ACTION : Should be combination of testname, qe, volume,  timestamp of creation
+
+
+number_of_volumes_to_create = 3
+extension_factor_input = 30
+number_of_snapshot_per_volume = 3
 
 server_name =  'qe' + '_server_' + str(time.time())# ACTION : Should be combination of testname, qe, server, timestamp of creation
-number_of_snapshots = 1
 
-# Object instatiation [May be modularized]
-os_objects_handle_volume = VolumeOperations(bootable_factor = 'nonbootable', volumes_name_prefix = 'AA_qe_99999', number_of_volumes=2)
+# Object Instantiation for volumes
+os_objects_handle_volume = VolumeOperations()
 
-# MULTIPLE VOLUME CREATION
-print "\nMAIN SCRIPT : VOLUME CREATE..."
-non_bootable_volume_list = os_objects_handle_volume.volumes_create()
-print "\nMAIN SCRIPT : NONBOOTABLE VOLUME LIST IS %s" %non_bootable_volume_list
-
-# Object Instantiation
-os_objects_handle_snapshots = SnapshotOperations()
-
-# os_objects_handle_volume = VolumeOperations(bootable_factor = 'bootable', volumes_name_prefix = 'INDAA96', number_of_volumes=2)
-# bootable_volume_list = os_objects_handle_volume.volumes_create()
-# print "\nMAIN SCRIPT : NONBOOTABLE VOLUME LIST IS %s" %bootable_volume_list
-
-# # MULTIPLE VOLUME CREATION
-# print "\nMAIN SCRIPT : VOLUME CREATE..."
-# bootable_volume_list = os_objects_handle_volume.volumes_create()
-# print "\nMAIN SCRIPT : BOOTABLE VOLUME LIST IS %s" %bootable_volume_list
+# MULTIPLE NON BOOTABLE VOLUME CREATION
+non_bootable_volume_list = os_objects_handle_volume.volumes_create(volumes_name_prefix = 'BNG123',
+                                                                   number_of_volumes=number_of_volumes_to_create)
 #
-# # # EXTEND VOLUME
-# # extend_val = os_objects_handle_volume.volumes_extend(bootable_volume_list, extension_factor = 10)
-# extend_val = os_objects_handle_volume.volumes_extend(bootable_volume_list, extension_factor = 20)
-# print "\nMAIN SCRIPT : VOLUME EXTEND...%s" %(extend_val)
-# #
+# # MULTIPLE BOOTABLE VOLUME CREATION
+# bootable_volume_list = os_objects_handle_volume.volumes_create(bootable_factor = 'bootable',
+#                                                                volumes_name_prefix = 'BNG123',
+#                                                                number_of_volumes=number_of_volumes_to_create)
+# # EXTEND VOLUME
+# non_bootable_volume_list = os_objects_handle_volume.volumes_extend(non_bootable_volume_list,
+#                                                      extension_factor = extension_factor_input)
+# bootable_volume_list = os_objects_handle_volume.volumes_extend(bootable_volume_list,
+#                                                                   extension_factor = extension_factor_input)
+
+# Object Instantiation for snapshots
+os_objects_handle_snapshots = SnapshotOperations()
 
 # SNAPSHOT CREATION OF UNATTACHED VOLUMES
 print "\nMAIN SCRIPT : SNAPSHOT CREATE..."
-snapshot_name_dict = os_objects_handle_snapshots.snapshots_create(non_bootable_volume_list, number_of_snapshot_per_volume=3)
+(input_volume_list, created_snapshot_list, volume_snapshot_mapping) = os_objects_handle_snapshots.snapshots_create(
+                                                                                   non_bootable_volume_list,
+                                                                                   number_of_snapshot_per_volume=
+                                                                                   number_of_snapshot_per_volume)
 
-# print the list of volume:snapshot pairs
-for volumes, snapshots in snapshot_name_dict.iteritems():
-    print "\nVOLUME %s" % volumes
-    print "\nSNAPSHOTS %s" % snapshots
+# CREATE VOLUMES FROM SOURCE=SNAPSHOT
+print "\nMAIN SCRIPT : VOLUME CREATE FROM SNAPSHOT"
+volume_cloned_from_snapshot_prefix = 'cloned_from_'
+cloned_from_snapshot_list = os_objects_handle_volume.volumes_clone("snapshot",
+                                                                   non_bootable_volume_list,
+                                                                   created_snapshot_list,
+                                                                   volume_cloned_from_snapshot_prefix)
+
+# # CREATE VOLUMES FROM SOURCE=BOOTABLE VOLUME
+# print "\nMAIN SCRIPT : VOLUME CREATE FROM BOOTABLE VOLUME"
+# volume_cloned_from_volume_prefix = 'cloned_from_bootable_'
+# cloned_from_bootable_volume_list = os_objects_handle_volume.volumes_clone("volume",
+#                                                                                bootable_volume_list,
+#                                                                                volume_cloned_from_volume_prefix)
+#
+# # CREATE VOLUMES FROM SOURCE=NON BOOTABLE VOLUME
+# print "\nMAIN SCRIPT : VOLUME CREATE FROM NON BOOTABLE VOLUME"
+# volume_cloned_from_volume_prefix = 'cloned_from_bootable_'
+# cloned_from_non_bootable_volume_list = os_objects_handle_volume.volumes_clone("volume",
+#                                                                                non_bootable_volume_list,
+#                                                                                volume_cloned_from_volume_prefix)
 
 #
 # # INSTANCE CREATION
@@ -84,33 +100,17 @@ for volumes, snapshots in snapshot_name_dict.iteritems():
 # print "\nMAIN SCRIPT : SNAPSHOT CREATE..."
 # snapshot_name_2 = os_objects_handle_volume.volume_snapshot_create(volume_name, number_of_snapshots)
 #
-# # CREATE VOLUMES FROM SOURCE=SNAPSHOT
-# print "\nMAIN SCRIPT : VOLUME CREATE FROM SNAPSHOT"
-# volume_from_snapshot = 'cloned_from_' + snapshot_name
-# result_snapshot_os_objects_handle_volume = os_objects_handle_volume.volumes_clone("snapshot", snapshot_name, volume_from_snapshot)
+
 #
-# # CREATE VOLUMES FROM SOURCE=VOLUME
-# print "\nMAIN SCRIPT : VOLUME CREATE FROM VOLUME"
-# volume_from_volume = 'cloned_from_' + volume_name
-# result_clone_os_objects_handle_volume = os_objects_handle_volume.volumes_clone("volume",volume_name, volume_from_volume)
-#
-# DELETE SNAPSHOTS
+# DELETE ALL SNAPSHOTS
 print "\nMAIN SCRIPT : VOLUME SNAPSHOT DELETION"
-snapshot_delete = os_objects_handle_snapshots.snapshots_delete(non_bootable_volume_list, snapshot_name_dict, number_of_snapshot_per_volume=3)
-print "DEBUG: snapshot delete is %s" %snapshot_delete
-# snapshot_delete = os_objects_handle_volume.volume_snapshot_delete(snapshot_name_1)
-# snapshot_delete = os_objects_handle_volume.volume_snapshot_delete(snapshot_name_2)
+snapshot_delete = os_objects_handle_snapshots.snapshots_delete(non_bootable_volume_list,
+                                                               dict_of_volume_snapshot_association,
+                                                               number_of_snapshot_per_volume=
+                                                               number_of_snapshot_per_volume)
 
-# DELETE VOLUMES
+# DELETE ALL VOLUMES
 print "\nMAIN SCRIPT : VOLUME DELETION"
-volume_delete = os_objects_handle_volume.volumes_delete(non_bootable_volume_list)
-print "DEBUG: volume_delete is %s" %volume_delete
-# volume_delete = os_objects_handle_volume.volume_delete(volume_from_snapshot)
-# volume_delete = os_objects_handle_volume.volume_delete(volume_from_volume)
-
-# # DELETE SERVER
-# "\nMAIN SCRIPT : SERVER DELETION"
-# server_delete = os_objects_handle_server.server_delete(server_name)
-
-
+volume_delete_non_bootable = os_objects_handle_volume.volumes_delete(non_bootable_volume_list)
+volume_delete_bootable = os_objects_handle_volume.volumes_delete(bootable_volume_list)
 
