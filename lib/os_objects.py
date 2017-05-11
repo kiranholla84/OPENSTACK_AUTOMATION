@@ -182,25 +182,27 @@ class VolumeOperations(object):
         self.replication_factor = replication_factor
 
         # Execute creation of all volumes in parallel. This is not a multi-threaded way of calling though
-        for self.volumes_index in range(0, self.number_of_volumes):
+        for self.volume_index in range(0, self.number_of_volumes):
 
             # Create a dictionary of values for each input volume  having common volume properties
-            self.volume_details = {'name': self.volumes_name_prefix + str(self.volumes_index),
+            self.volume_details = {'name': self.volumes_name_prefix + str(self.volume_index),
                                    'size': self.select_volumes_size() ,'volume_type' : self.volumes_type_return(),
                                    'bootable_factor': self.bootable_factor}
+
+
 
             # Append the latest volume name dictionary entry to the volume name list. This  list of dictionaries
             # will be used later for comparison
             self.volume_details_input_list.append(self.volume_details)
 
             print "\n================CREATING %s VOLUME %s ================\n" \
-            % (self.volume_details_input_list[self.volumes_index]['bootable_factor'],
-            (self.volume_details_input_list[self.volumes_index]['name']))
+            % (self.volume_details_input_list[self.volume_index]['bootable_factor'],
+            (self.volume_details_input_list[self.volume_index]['name']))
 
             # This is only to input to the command below , or else the command would look too long!
-            self.input_volume_name = self.volume_details_input_list[self.volumes_index]['name']
-            self.input_volume_size = self.volume_details_input_list[self.volumes_index]['size']
-            self.input_volume_type = self.volume_details_input_list[self.volumes_index]['volume_type']
+            self.input_volume_name = self.volume_details_input_list[self.volume_index]['name']
+            self.input_volume_size = self.volume_details_input_list[self.volume_index]['size']
+            self.input_volume_type = self.volume_details_input_list[self.volume_index]['volume_type']
 
             print "DEBUG1 %s %s %s " % (self.input_volume_name, self.input_volume_size, self.input_volume_type)
 
@@ -215,7 +217,7 @@ class VolumeOperations(object):
                 VolumeOperations.bootable_string = VolumeOperations.bootable_true_string
 
                 # Volume Create Command to be input
-                self.list_checkOutput[self.volumes_index] = ['openstack', 'volume', 'create', '--image',
+                self.list_checkOutput[self.volume_index] = ['openstack', 'volume', 'create', '--image',
                                                              self.os_image, '--type', self.input_volume_type ,
                                                              '--size', str(self.input_volume_size),
                                                              self.input_volume_name, '-f', 'json']
@@ -224,7 +226,7 @@ class VolumeOperations(object):
                 VolumeOperations.bootable_string = VolumeOperations.bootable_false_string
 
                 # Volume Create Command to be input
-                self.list_checkOutput[self.volumes_index]= ['openstack', 'volume', 'create', '--size',
+                self.list_checkOutput[self.volume_index]= ['openstack', 'volume', 'create', '--size',
                                                             str(self.input_volume_size), '--type',
                                                             self.input_volume_type, self.input_volume_name,
                                                             '-f', 'json']
@@ -233,21 +235,23 @@ class VolumeOperations(object):
             self.volume_details['bootable_factor'] = VolumeOperations.bootable_string
 
             # Execute the Openstack CLI Command which creates volume
-            self.temp = subprocess.check_output(self.list_checkOutput[self.volumes_index])
+            self.temp = subprocess.check_output(self.list_checkOutput[self.volume_index])
             self.temp2 = loads(self.temp)
             self.op.append(self.temp2)
 
-        # Call volumes_check function to Check the volume creation one by one
-        for self.volumes_index in range(0, self.number_of_volumes):
+        # Call volumes_check function to Check the volume creation one by one [This can be modularized]
+        for self.volume_index in range(0, self.number_of_volumes):
 
-            self.comparison_check_parameter = self.volumes_check(self.volume_details_input_list, self.volumes_index, 'create')
-
-            # the tuple returned has the volume object in the first
-            self.final_volumes_array_objects.append(self.comparison_check_parameter[0])
+            self.comparison_check_parameter = self.volumes_check(volumes_input_list = self.volume_details_input_list,
+                                                                 index_of_list = self.volume_index,
+                                                                 type_of_operation = 'create')
 
             # Check for volume creation
             if self.comparison_check_parameter[1] == 0:
-                print "VOLUME %s SUCCESSFULLY CREATED" % (self.volume_details_input_list[self.volumes_index]['name'])
+                print "VOLUME %s SUCCESSFULLY CREATED" % (self.volume_details_input_list[self.volume_index]['name'])
+
+                # the tuple returned has the volume object in the first
+                self.final_volumes_array_objects.append(self.comparison_check_parameter[0])
             else:
                 print "VOLUME NOT CREATED"
 
@@ -258,13 +262,13 @@ class VolumeOperations(object):
 
         return self.final_volumes_array_objects
 
-    def volumes_check(self, volumes_input_list, index_of_list, type_of_operation, snapshots_input_list, snapshot_index,
-                      final_state_of_volume='available', *args):
+    def volumes_check(self, volumes_input_list, index_of_list, type_of_operation, final_state_of_volume='available',
+                      snapshots_input_list = [], snapshot_index = 0 ):
 
-        # self.volumes_check(self.volume_extend_list, self.volumes_index, "extend", "available", self.extension_factor)
+        # self.volumes_check(self.volume_extend_list, self.volume_index, "extend", "available", self.extension_factor)
 
         self.volume_details_input_list = volumes_input_list
-        self.volumes_index = index_of_list
+        self.volume_index = index_of_list
         self.type_of_operation = type_of_operation
         self.final_state_of_volume = final_state_of_volume
         self.snapshots_input_list = snapshots_input_list
@@ -274,26 +278,26 @@ class VolumeOperations(object):
         # This array will affect create, clone, extend etc.
         # So after the particular operation, this list should be cleared!
         self.volumes_check_array_objects.append(self.async_task_wait_process("volume",
-                                          self.volume_details_input_list[self.volumes_index],
+                                          self.volume_details_input_list[self.volume_index],
                                           self.final_state_of_volume))
 
         if self.type_of_operation == 'create':
 
             print "DEBUG1: volume_details_input_list %s"  %self.volume_details_input_list
             print "DEBUG2: volumes_check_array_objects %s" % self.volumes_check_array_objects
-            print "DEBUG3 : Index %s" %self.volumes_index
-            print "DEBUG4 : %s" %(self.volumes_check_array_objects[self.volumes_index])
+            print "DEBUG3 : Index %s" %self.volume_index
+            print "DEBUG4 : %s" %(self.volumes_check_array_objects[self.volume_index])
 
-            self.inputs = [self.volume_details_input_list[self.volumes_index]['name'],
-                           self.volume_details_input_list[self.volumes_index]['size'],
-                           self.volume_details_input_list[self.volumes_index]['volume_type'],
-                           self.volume_details_input_list[self.volumes_index]['bootable_factor']]
+            self.inputs = [self.volume_details_input_list[self.volume_index]['name'],
+                           self.volume_details_input_list[self.volume_index]['size'],
+                           self.volume_details_input_list[self.volume_index]['volume_type'],
+                           self.volume_details_input_list[self.volume_index]['bootable_factor']]
 
             # Outputs are from the object details of the newly created volume. Both will be compared
-            self.values = [self.volumes_check_array_objects[self.volumes_index]['name'],
-                           self.volumes_check_array_objects[self.volumes_index]['size'],
-                           self.volumes_check_array_objects[self.volumes_index]['type'],
-                           self.volumes_check_array_objects[self.volumes_index]['bootable']]
+            self.values = [self.volumes_check_array_objects[self.volume_index]['name'],
+                           self.volumes_check_array_objects[self.volume_index]['size'],
+                           self.volumes_check_array_objects[self.volume_index]['type'],
+                           self.volumes_check_array_objects[self.volume_index]['bootable']]
 
         # Clone from volume
         if (self.type_of_operation == 'clone_from_volume'):
@@ -301,47 +305,47 @@ class VolumeOperations(object):
 
             print "DEBUG1: volume_details_input_list %s" % self.volume_details_input_list
             print "DEBUG2: volumes_check_array_objects %s" % self.volumes_check_array_objects
-            print "DEBUG3 : Index %s" % self.volumes_index
-            print "DEBUG4 : %s" % (self.volumes_check_array_objects[self.volumes_index])
+            print "DEBUG3 : Index %s" % self.volume_index
+            print "DEBUG4 : %s" % (self.volumes_check_array_objects[self.volume_index])
 
-            self.inputs = [self.volume_details_input_list[self.volumes_index]['id'],
-                           self.volume_details_input_list[self.volumes_index]['size'],
-                           self.volume_details_input_list[self.volumes_index]['type'],
-                           self.volume_details_input_list[self.volumes_index]['bootable'],
-                           self.volume_details_input_list[self.volumes_index]['replication_status'],
-                           self.volume_details_input_list[self.volumes_index]['description'],
-                           self.volume_details_input_list[self.volumes_index]['status']]
+            self.inputs = [self.volume_details_input_list[self.volume_index]['id'],
+                           self.volume_details_input_list[self.volume_index]['size'],
+                           self.volume_details_input_list[self.volume_index]['type'],
+                           self.volume_details_input_list[self.volume_index]['bootable'],
+                           self.volume_details_input_list[self.volume_index]['replication_status'],
+                           self.volume_details_input_list[self.volume_index]['description'],
+                           self.volume_details_input_list[self.volume_index]['status']]
 
             # Outputs are from the object details of the newly created volume. Both will be compared
-            self.values = [self.volumes_check_array_objects[self.volumes_index]['source_volid'],
-                           self.volumes_check_array_objects[self.volumes_index]['size'],
-                           self.volumes_check_array_objects[self.volumes_index]['type'],
-                           self.volumes_check_array_objects[self.volumes_index]['bootable'],
-                           self.volumes_check_array_objects[self.volumes_index]['replication_status'],
-                           self.volumes_check_array_objects[self.volumes_index]['description'],
-                           self.volumes_check_array_objects[self.volumes_index]['status']]
+            self.values = [self.volumes_check_array_objects[self.volume_index]['source_volid'],
+                           self.volumes_check_array_objects[self.volume_index]['size'],
+                           self.volumes_check_array_objects[self.volume_index]['type'],
+                           self.volumes_check_array_objects[self.volume_index]['bootable'],
+                           self.volumes_check_array_objects[self.volume_index]['replication_status'],
+                           self.volumes_check_array_objects[self.volume_index]['description'],
+                           self.volumes_check_array_objects[self.volume_index]['status']]
 
         # Clone from snapshot
         if (self.type_of_operation == 'clone_from_snapshot'):
             print "DEBUG1: volume_details_input_list %s" % self.volume_details_input_list
             print "DEBUG2: volumes_check_array_objects %s" % self.volumes_check_array_objects
-            print "DEBUG3 : Index %s" % self.volumes_index
-            print "DEBUG4 : %s" % (self.volumes_check_array_objects[self.volumes_index])
+            print "DEBUG3 : Index %s" % self.volume_index
+            print "DEBUG4 : %s" % (self.volumes_check_array_objects[self.volume_index])
 
-            self.inputs = [self.snapshots_input_list[self.volumes_index][self.snapshot_index]['id'],
-                           self.snapshots_input_list[self.volumes_index][self.snapshot_index]['size'],
-                           self.volume_details_input_list[self.volumes_index]['type'],
-                           self.volume_details_input_list[self.volumes_index]['bootable'],
-                           self.volume_details_input_list[self.volumes_index]['replication_status'],
-                           self.volume_details_input_list[self.volumes_index]['status']]
+            self.inputs = [self.snapshots_input_list[self.volume_index][self.snapshot_index]['id'],
+                           self.snapshots_input_list[self.volume_index][self.snapshot_index]['size'],
+                           self.volume_details_input_list[self.volume_index]['type'],
+                           self.volume_details_input_list[self.volume_index]['bootable'],
+                           self.volume_details_input_list[self.volume_index]['replication_status'],
+                           self.volume_details_input_list[self.volume_index]['status']]
 
             # Outputs are from the object details of the newly created volume. Both will be compared
-            self.values = [self.volumes_check_array_objects[self.volumes_index]['snapshot_id'],
-                           self.volumes_check_array_objects[self.volumes_index]['size'],
-                           self.volumes_check_array_objects[self.volumes_index]['type'],
-                           self.volumes_check_array_objects[self.volumes_index]['bootable'],
-                           self.volumes_check_array_objects[self.volumes_index]['replication_status'],
-                           self.volumes_check_array_objects[self.volumes_index]['status']]
+            self.values = [self.volumes_check_array_objects[self.volume_index]['snapshot_id'],
+                           self.volumes_check_array_objects[self.volume_index]['size'],
+                           self.volumes_check_array_objects[self.volume_index]['type'],
+                           self.volumes_check_array_objects[self.volume_index]['bootable'],
+                           self.volumes_check_array_objects[self.volume_index]['replication_status'],
+                           self.volumes_check_array_objects[self.volume_index]['status']]
 
 
         # extend
@@ -349,108 +353,153 @@ class VolumeOperations(object):
             self.extension_factor = args[0]
             print "DEBUG1: volume_details_input_list %s" % self.volume_details_input_list
             print "DEBUG2: volumes_check_array_objects %s" % self.volumes_check_array_objects
-            print "DEBUG3 : Index , extension factor %s %s" % (self.volumes_index , self.extension_factor)
-            print "DEBUG4 : %s" % (self.volumes_check_array_objects[self.volumes_index])
+            print "DEBUG3 : Index , extension factor %s %s" % (self.volume_index , self.extension_factor)
+            print "DEBUG4 : %s" % (self.volumes_check_array_objects[self.volume_index])
 
-            self.intended_extended_size = (self.volume_details_input_list[self.volumes_index]['size'] + self.extension_factor)
+            self.intended_extended_size = (self.volume_details_input_list[self.volume_index]['size'] + self.extension_factor)
             print "DEBUG4 : is %s" %self.intended_extended_size
-            self.inputs = [self.volume_details_input_list[self.volumes_index]['name'] , self.intended_extended_size]
-            self.values = [self.volumes_check_array_objects[self.volumes_index]['name'],
-                           self.volumes_check_array_objects[self.volumes_index]['size']]
+            self.inputs = [self.volume_details_input_list[self.volume_index]['name'] , self.intended_extended_size]
+            self.values = [self.volumes_check_array_objects[self.volume_index]['name'],
+                           self.volumes_check_array_objects[self.volume_index]['size']]
 
         # delete
         if(self.type_of_operation == 'delete'):
-            if self.volumes_check_array_objects[self.volumes_index] == 0:
+            if self.volumes_check_array_objects[self.volume_index] == 0:
                 return 0
 
         if self.values == self.inputs:
             print "\nVOLUME CHECK COMPLETED SUCCESSFULLY\n"
 
             # Return only the array pertaining to the volume index. Later it will be appended
-            return (self.volumes_check_array_objects[self.volumes_index],0)
+            return (self.volumes_check_array_objects[self.volume_index],0)
         else:
             print "\nVOLUME CHECK FAILED\n"
             print "DEBUG: INPUTS", self.inputs
             print "DEBUG: VALUES", self.values
             return 1
 
-    def volumes_clone(self, type_of_source, input_volume_list, name_prefix_of_target, created_snapshot_list):
+    def volumes_clone(self, type_of_source, **kwargs):
 
         self.type_of_source = type_of_source
-        self.input_snapshot_list = created_snapshot_list
-        self.name_prefix_of_target = name_prefix_of_target
-        self.input_volume_list = input_volume_list
+        self.input_snapshot_list = kwargs.get('input_snapshot_list', None)
+        self.input_volume_list = kwargs.get('input_volume_list', None)
+        self.dict_of_volname_snapshot = kwargs.get('dict_of_volname_snapshot', {})
+        self.name_prefix_of_target = kwargs.get('name_prefix_of_target', 2)
+        self.number_of_snapshots_per_volume = kwargs.get('number_of_snapshots_per_volume','None')
+        if isinstance(self.input_volume_list, list) == True: self.size_volume_list = (len(self.input_volume_list)) - 1
+        if isinstance(self.input_snapshot_list, list) == True: self.size_snapshot_list = \
+            (len(self.input_snapshot_list)) - 1
+        self.volume_index = 0
+        self.cloned_volume_index = 0
+        self.cloned_volume_details_input_list = []
+        self.source_volume_details_input_list = []
 
         # Modularize
         if (self.type_of_source == "snapshot"):
 
-            self.snapshots_only_list = self.input_source.values()
-            print "DEBUG1" , self.snapshots_only_list
-            print "DEBUG2" , self.snapshots_only_list[n]
-            print "DEBUG3" , self.snapshots_only_list[0][0]['name']
+            for self.volume_key in sorted(self.dict_of_volname_snapshot.keys()):
 
-            for self.volume_index in range(1,len(input_volume_list)):
-                for self.snapshot_information_object_array in (self.input_snapshot_list[self.volumes_index]):
-                    for self.snapshot_information_object in (self.snapshot_information_object_array):
-                        self.volume_name = self.name_prefix_of_target + "_" + self.snapshot_information_object['name'] \
-                                           + self.input_volume_list[self.volume_index]['name']
+                self.snapshot_list_for_volume_key = self.dict_of_volname_snapshot[self.volume_key]
+                print "DEBUG1 %s %s %s" %(self.snapshot_list_for_volume_key , self.volume_key,
+                                          type(self.snapshot_list_for_volume_key))
 
-                        print "\n================CREATING VOLUME %s FROM SNAPSHOT %s AS THE SOURCE================\n" \
-                              %(self.volume_name, self.snapshot_information_object['name'])
+                for self.each_snapshot_in_list in sorted(self.snapshot_list_for_volume_key):
+                    print "DEBUG2 %s %s" %(self.each_snapshot_in_list, type(self.each_snapshot_in_list))
 
-                        print "\n", self.snapshot_information_object
+                    # Create a dictionary of values for each input volume  having common volume properties
+                    self.volume_details = {'name': self.name_prefix_of_target + "_" + self.each_snapshot_in_list['name']
+                                                   + "_" + self.input_volume_list[self.volume_index]['name'],
+                                           'size': str(self.input_volume_list[self.volume_index]['size'])}
 
-                        self.list_checkOutput = ['openstack', 'volume', 'create', '--snapshot',
-                                                 self.snapshot_information_object['name'],
-                                                 '--size', self.input_volume_list[self.volume_index]['size'],
-                                                 self.volume_name]
+                    print "\nself.volume_details %s" %self.volume_details
+
+                    # Append the latest volume name dictionary entry to the volume name list. This  list of dictionaries
+                    # will be used later for comparison
+                    self.cloned_volume_details_input_list.append(self.volume_details)
+
+                    # The below is to create an array with same size as that of number of newly cloned volumes
+                    # but having details of source.
+                    # If there are clones C1,C2,C3,C4,C5,C6 belonging to snapshots S1,S2 of initial volumes
+                    # V1, V2, then the new varray would be V1,V1,V1,V2,V2,V2
+                    self.source_volume_details_input_list.append(self.input_volume_list[self.volume_index])
+
+                    print "\ninput_volume_list[volume_index] %s" %(self.input_volume_list[self.volume_index])
+                    print "\nvolume index cloned volume index %s %s" %(self.volume_index, self.cloned_volume_index)
+                    print "\ncloned_volume_details_input_list %s" %self.cloned_volume_details_input_list
+                    print "\nsource_volume_details_input_list %s" %self.source_volume_details_input_list
+
+                    # These names are assigned to be used in the command.
+                    self.input_volume_name = self.cloned_volume_details_input_list[self.cloned_volume_index]['name']
+                    self.input_volume_size = self.cloned_volume_details_input_list[self.cloned_volume_index]['size']
+
+                    print "\n================CREATING VOLUME %s FROM SNAPSHOT %s AS THE SOURCE================\n" \
+                          %(self.input_volume_name, self.each_snapshot_in_list['name'])
+
+                    self.list_checkOutput = ['openstack', 'volume', 'create', '--snapshot',
+                                             self.each_snapshot_in_list['name'], '--size', self.input_volume_size,
+                                             self.input_volume_name, '-f', 'json']
+                    self.cloned_volume_index+=1
+
+                    # Execute the Openstack CLI Command
+                    self.op = subprocess.check_output(self.list_checkOutput)
+                    self.op = loads(self.op)
+
+                # Increase the volume index
+                self.volume_index = self.volume_index + 1
         else:
 
-            for self.volume_index in range(1, len(input_volume_list)):
+            # source is clone
+            for self.volume_index in range(1, len(self.input_volume_list)):
                 self.volume_name = self.name_prefix_of_target + "_" + self.input_volume_list[self.volume_index]['name']
                 print "\n================CREATING VOLUME %s FROM ANOTHER VOLUME %s AS THE SOURCE ================\n" \
                       %(self.volume_name, self.input_volume_list[self.volume_index]['name'])
                 self.list_checkOutput = ['openstack', 'volume', 'create', '--source',
                                          self.input_volume_list[volume_index]['name'],
                                          '--size', self.input_volume_list[self.volume_index]['size'],
-                                         self.volume_name]
+                                         self.volume_name, '-f', 'json']
 
-        # Execute the Openstack CLI Command
-        self.op = subprocess.check_output(self.list_checkOutput)
-        self.op = loads(op)
+                # Execute the Openstack CLI Command
+                self.op = subprocess.check_output(self.list_checkOutput)
+                self.op = loads(self.op)
 
-        # Call volumes_check function to Check the volume creation one by one
-        for self.volumes_index in range(0, self.len(input_volume_list)):
-
-            if (self.type_of_source == "snapshot"):
-                for self.snap_index in range(0,len(self.input_snapshot_list(self.volumes_index))):
-                    self.comparison_check_parameter = self.volumes_check(self.input_volume_list, self.volumes_index,
-                                                                         'clone_a_volume_from_snapshot',
-                                                                         self.input_snapshot_list, self.snapshot_index)
-                    # Append the returned volume object to the sub array that has respective volumes for snapshots
-                    # for input volumes
-                    self.volumes_per_snapshot_array.append(self.comparison_check_parameter[0])
-
-                # Append the "n" volumes in such a way, they should map with "n" snapshots per 1 input volume
-                # 1 input volume = "n" snapshots per 1 input volume = "n" volumes created out of "n" snapshots per
-                # input volume
-                self.final_volumes_array_objects.append(self.volumes_per_snapshot_array)
-                self.volumes_per_snapshot_array = []
-
-            # for cloning from volumes
-            else:
-                self.comparison_check_parameter = self.volumes_check(self.input_volume_list, self.volumes_index,
-                                                                 'clone_a_volume_from_volume')
-
-            # Check for volume creation
-            if self.comparison_check_parameter[1] == 0:
-                print "VOLUME %s SUCCESSFULLY CLONED" % (self.final_volumes_array_objects[self.volumes_index]['name'])
-
-                # the tuple returned has the volume object in the first
-                self.final_volumes_array_objects.append(self.comparison_check_parameter[0])
-
-            else:
-                print "VOLUME NOT CLONED"
+        # # Call volumes_check function to Check the volume creation one by one
+        # for self.volume_index in range(0, self.len(input_volume_list)):
+        #
+        #     if (self.type_of_source == "snapshot"):
+        #
+        #         for self.volume_index in range(0, self.size_volume_list):
+        #             for self.snapshot_index in range(0, self.number_of_snapshots_per_volume):
+        #                 # for self.snapshot_information_object_array in (self.input_snapshot_list[self.volume_index]):
+        #                 for self.snapshot_information_object in (self.input_snapshot_list):
+        #                     self.comparison_check_parameter = self.volumes_check(
+        #                         volumes_input_list = self.input_volume_list, index_of_list = self.volume_index,
+        #                         type_of_operation ='clone_a_volume_from_snapshot',
+        #                         snapshots_input_list = self.input_snapshot_list, snapshot_index = self.snapshot_index)
+        #
+        #                     # Append the returned volume object to the sub array that has respective volumes for
+        #                     # snapshots
+        #                     self.created_volume_per_snapshot_array.append(self.comparison_check_parameter[0])
+        #
+        #             # Append the "n" volumes in such a way, they should map with "n" snapshots per 1 input volume
+        #             # 1 input volume = "n" snapshots per 1 input volume = "n" volumes created out of "n" snapshots per
+        #             # input volume
+        #             self.final_volumes_array_objects.append(self.volumes_per_snapshot_array)
+        #             self.volumes_per_snapshot_array = []
+        #
+        #     # for cloning from volumes
+        #     else:
+        #         self.comparison_check_parameter = self.volumes_check(self.input_volume_list, self.volume_index,
+        #                                                          'clone_a_volume_from_volume')
+        #
+        #     # Check for volume creation
+        #     if self.comparison_check_parameter[1] == 0:
+        #         print "VOLUME %s SUCCESSFULLY CLONED" % (self.final_volumes_array_objects[self.volume_index]['name'])
+        #
+        #         # the tuple returned has the volume object in the first
+        #         self.final_volumes_array_objects.append(self.comparison_check_parameter[0])
+        #
+        #     else:
+        #         print "VOLUME NOT CLONED"
 
         print "\nDEBUG: FINAL VOLUME ARRAY IS %s" %self.final_volumes_array_objects
 
@@ -469,16 +518,16 @@ class VolumeOperations(object):
 
         print "\nDEBUG: LENGTH OF THE VOLUME ARRAY %s" %self.length_volumes_array
 
-        for self.volumes_index in range(0, self.length_volumes_array):
+        for self.volume_index in range(0, self.length_volumes_array):
 
             # print "\n================VOLUME EXTEND================\n"
-            self.intended_extended_size = (self.volume_extend_list[self.volumes_index])['size']  + self.extension_factor
+            self.intended_extended_size = (self.volume_extend_list[self.volume_index])['size']  + self.extension_factor
 
             self.list_check_output = ['openstack' , 'volume' , 'set' , '--size' , str(self.intended_extended_size),
-                                      self.volume_extend_list[self.volumes_index]['name']]
+                                      self.volume_extend_list[self.volume_index]['name']]
             self.op = subprocess.check_output(self.list_check_output)
 
-            self.comparison_check_parameter_extend = self.volumes_check(self.volume_extend_list, self.volumes_index,
+            self.comparison_check_parameter_extend = self.volumes_check(self.volume_extend_list, self.volume_index,
                                                                         "extend", "available", self.extension_factor)
 
 
@@ -486,13 +535,13 @@ class VolumeOperations(object):
             self.final_extended_volumes_array_objects.append(self.comparison_check_parameter_extend[0])
 
             print "NEW EXTENDED SIZE OF VOLUME %s IS %s" \
-                  %(self.final_extended_volumes_array_objects[self.volumes_index]['name'],
-                    self.final_extended_volumes_array_objects[self.volumes_index]['size'])
+                  %(self.final_extended_volumes_array_objects[self.volume_index]['name'],
+                    self.final_extended_volumes_array_objects[self.volume_index]['size'])
 
             # Check for the return value in the tuple
             if self.comparison_check_parameter_extend[1] == 0:
                 print "VOLUME %s SUCCESSFULLY EXTENDED" \
-                      % (self.final_extended_volumes_array_objects[self.volumes_index]['name'])
+                      % (self.final_extended_volumes_array_objects[self.volume_index]['name'])
             else:
                 print "VOLUME NOT EXTENDED"
 
@@ -508,24 +557,24 @@ class VolumeOperations(object):
         # print "DEBUG1: Type of volume list" , type(volume_delete_list)
         # print "DEBUG2 : volume list" , self.volume_delete_list
 
-        for self.volumes_index in range(0, self.length_volumes_array):
+        for self.volume_index in range(0, self.length_volumes_array):
 
-            # print "DEBUG3 : %s" % self.volume_delete_list[self.volumes_index]
-            # print "DEBUG4 : %s" % self.volumes_index
+            # print "DEBUG3 : %s" % self.volume_delete_list[self.volume_index]
+            # print "DEBUG4 : %s" % self.volume_index
 
-            print "\n==========DELETION OF VOLUME %s==========\n" % (self.volume_delete_list[self.volumes_index])['name']
+            print "\n==========DELETION OF VOLUME %s==========\n" % (self.volume_delete_list[self.volume_index])['name']
 
-            self.list_checkOutput_delete = ['openstack' ,'volume' ,'delete' , (self.volume_delete_list[self.volumes_index])['name']]
+            self.list_checkOutput_delete = ['openstack' ,'volume' ,'delete' , (self.volume_delete_list[self.volume_index])['name']]
             self.op = subprocess.check_output(self.list_checkOutput_delete)
 
-            self.op_status = self.volumes_check(self.volume_delete_list, self.volumes_index , "delete", "NA")
+            self.op_status = self.volumes_check(self.volume_delete_list, self.volume_index , "delete", "NA")
 
             # Enter only if the volume exists
             if self.op_status == 0:
-                print "\nVOLUME %s SUCCESSFULLY DELETED" %(self.volume_delete_list[self.volumes_index])['name']
+                print "\nVOLUME %s SUCCESSFULLY DELETED" %(self.volume_delete_list[self.volume_index])['name']
                 self.delete_number = self.delete_number + 1
             else:
-                print "\nVOLUME %s COULD NOT BE DELETED" %(self.volume_delete_list[self.volumes_index])['name']
+                print "\nVOLUME %s COULD NOT BE DELETED" %(self.volume_delete_list[self.volume_index])['name']
 
         return self.delete_number
 
@@ -579,34 +628,36 @@ class SnapshotOperations(object):
                 print "\nINPUTS", self.inputs
                 return 1
 
-        def snapshots_create(self, volume_list_for_snapshots, number_of_snapshot_per_volume = 2):
+        def snapshots_create(self, **kwargs):
 
-            self.volume_list_for_snapshots = volume_list_for_snapshots
+            # variable extraction
+            self.volume_list_for_snapshots = kwargs.get('volume_list', None)
+            self.number_of_snapshots_per_volume = kwargs.get('number_of_snapshots_per_volume', None)
+            self.snapshot_name_prefix = kwargs.get('snapshot_prefix', None)
+
+            # define these for future use
             self.length_volumes_array = len(self.volume_list_for_snapshots)
-            self.snapshot_name_prefix = 'snapshot_'
-            self.number_of_snapshot_per_volume = number_of_snapshot_per_volume
             self.list_of_snapshots_for_volume = []
             self.snap_details_input_list = []
             self.created_snapshots_list_for_one_volume_per_volume_index = []
             self.created_snapshots_list_for_all_volumes_per_volume_index = []
             self.volume_snapshot_mapping_dict = dict()
 
+            # WE ARE NOT CREATING SNAPSHOTS HERE BUT CREATING DATASTRUCTURES TO BE USED LATER FOR COMPARISON
+            for self.volume_index in range(0, self.length_volumes_array):
 
-            # Creating list of lists, each inner list having dictionaries of snapshot infromation
-            for self.volumes_index in range(0, self.length_volumes_array):
-
-                for self.snap_index in range(0, self.number_of_snapshot_per_volume):
+                for self.snap_index in range(0, self.number_of_snapshots_per_volume):
 
                     # Create a dictionary of values for each input snapshot  having common properties but
                     # different values
                     self.snap_details = {'name': self.snapshot_name_prefix +
-                                                   self.volume_list_for_snapshots[self.volumes_index]['name'] + "_" +
+                                                   self.volume_list_for_snapshots[self.volume_index]['name'] + "_" +
                                                    str(self.snap_index),
-                                           'source_volume_name': self.volume_list_for_snapshots[self.volumes_index]
+                                           'source_volume_name': self.volume_list_for_snapshots[self.volume_index]
                                            ['name'],
                                            'snapshot_description': "THIS IS SNAPSHOT %s"
                                                                    %(self.snapshot_name_prefix +
-                                                                     self.volume_list_for_snapshots[self.volumes_index]
+                                                                     self.volume_list_for_snapshots[self.volume_index]
                                                                      ['name'] +
                                                                      str(self.snap_index)),
                                            }
@@ -622,64 +673,72 @@ class SnapshotOperations(object):
                 # volume
                 self.snap_details_input_list = []
 
-            print "DEBUG2 :list_of_snapshots_for_volume is %s" %self.list_of_snapshots_for_volume
-
-
-            for self.volumes_index in range(0, self.length_volumes_array):
-                for self.snap_index in range(0, self.number_of_snapshot_per_volume):
-                    print "DEBUG3 : %s %s" %(self.volumes_index , self.snap_index)
+            # WE ARE NOW CREATING SNAPSHOTS
+            for self.volume_index in range(0, self.length_volumes_array):
+                for self.snap_index in range(0, self.number_of_snapshots_per_volume):
+                    print "DEBUG3 : %s %s" %(self.volume_index , self.snap_index)
                     print "\n================CREATING SNAPSHOT WITH NAME %s FOR VOLUME %s ================\n" \
-                          %(self.list_of_snapshots_for_volume[self.volumes_index][self.snap_index]['name'],
-                            self.volume_list_for_snapshots[self.volumes_index]['name'])
+                          %(self.list_of_snapshots_for_volume[self.volume_index][self.snap_index]['name'],
+                            self.volume_list_for_snapshots[self.volume_index]['name'])
 
                     # Snapshot command [First one is for Newton release
                     self.list_check_output_snap_create = ['openstack','snapshot', 'create', '--name',
-                                                          (self.list_of_snapshots_for_volume[self.volumes_index]
+                                                          (self.list_of_snapshots_for_volume[self.volume_index]
                                                            [self.snap_index]['name']),
                                                           '--description',
-                                                          self.list_of_snapshots_for_volume[self.volumes_index]
+                                                          self.list_of_snapshots_for_volume[self.volume_index]
                                                           [self.snap_index]['snapshot_description'], '--force',
-                                                          self.volume_list_for_snapshots[self.volumes_index]['name']
+                                                          self.volume_list_for_snapshots[self.volume_index]['name']
                                                           ]
                     # this is for Ocata release
                     # self.list_check_output_snap_create = ['openstack', 'volume', 'snapshot', 'create', "--volume",
-                    #                      self.volume_list_for_snapshots[self.volumes_index]['name'], "--description",
-                    #                      self.list_of_snapshots_for_volume[self.volumes_index][self.snap_index]
+                    #                      self.volume_list_for_snapshots[self.volume_index]['name'], "--description",
+                    #                      self.list_of_snapshots_for_volume[self.volume_index][self.snap_index]
                     #                                       ['snapshot_description'],
-                    #                      self.list_of_snapshots_for_volume[self.volumes_index][self.snap_index]['name'],
+                    #                      self.list_of_snapshots_for_volume[self.volume_index][self.snap_index]['name'],
                     #                                       '--force' ]
 
                     self.snap_create = subprocess.check_output(self.list_check_output_snap_create)
 
-            # This whole code is to check if snapshot creation happened
-            for self.volumes_index in range(0, self.length_volumes_array):
-                for self.snap_index in range(0, self.number_of_snapshot_per_volume):
+            # WE ARE NOW CHECKING IF THE CREATE OPERATION IS SUCCESSFUL
+            for self.volume_index in range(0, self.length_volumes_array):
+                for self.snap_index in range(0, self.number_of_snapshots_per_volume):
                     # Sending the snapshot object & volume object for checking if snapshot is created
                     self.create_snapshot_operation = self.snapshots_check\
-                        (self.list_of_snapshots_for_volume[self.volumes_index][self.snap_index],
-                        (self.volume_list_for_snapshots[self.volumes_index]))
+                        (self.list_of_snapshots_for_volume[self.volume_index][self.snap_index],
+                        (self.volume_list_for_snapshots[self.volume_index]))
 
-                    self.created_snapshots_list_for_one_volume_per_volume_index.append(self.create_snapshot_operation)
-                    print "CREATE SNAPSHOT OPERATION FOR SNAPSHOT %s RESULTED IN %s" %(self.list_of_snapshots_for_volume[self.volumes_index][self.snap_index]['name'], self.created_snapshots_list_for_one_volume_per_volume_index)
+                    if self.create_snapshot_operation == 1:
+                        print "CREATE SNAPSHOT OPERATION FOR SNAPSHOT %s RESULTED IN FAILURE"\
+                              %(self.list_of_snapshots_for_volume[self.volume_index][self.snap_index]['name'])
+                        break
+                    else:
+                        self.created_snapshots_list_for_one_volume_per_volume_index.\
+                            append(self.create_snapshot_operation)
+                        print "CREATE SNAPSHOT OPERATION FOR SNAPSHOT %s RESULTED IN %s" \
+                              %(self.list_of_snapshots_for_volume[self.volume_index][self.snap_index]['name'],
+                                self.created_snapshots_list_for_one_volume_per_volume_index)
 
-                # array of all snapshots objencts
-                self.created_snapshots_list_for_all_volumes_per_volume_index.append(self.created_snapshots_list_for_one_volume_per_volume_index)
+                # array of all snapshots objects
+                self.created_snapshots_list_for_all_volumes_per_volume_index.\
+                append(self.created_snapshots_list_for_one_volume_per_volume_index)
 
                 # Dictionary object with Volume name & Snapshot objects. Can be used if required
-                self.volume_snapshot_mapping_dict[(self.volume_list_for_snapshots[self.volumes_index])['name']] = self.created_snapshots_list_for_one_volume_per_volume_index
+                self.volume_snapshot_mapping_dict[(self.volume_list_for_snapshots[self.volume_index])['name']]\
+                    = self.created_snapshots_list_for_one_volume_per_volume_index
                 self.created_snapshots_list_for_one_volume_per_volume_index = []
 
             # return the input volume list, snapshot list, volum
             return (self.volume_list_for_snapshots , self.created_snapshots_list_for_all_volumes_per_volume_index,
                     self.volume_snapshot_mapping_dict)
 
-        def snapshots_delete(self, volume_list_for_snapshots, volume_snapshot_names_dict, number_of_snapshot_per_volume = 2):
+        def snapshots_delete(self, volume_list_for_snapshots, volume_snapshot_names_dict, number_of_snapshots_per_volume = 2):
 
-            self.number_of_snapshot_per_volume = number_of_snapshot_per_volume
+            self.number_of_snapshots_per_volume = number_of_snapshots_per_volume
             self.volume_snapshot_names_dict = volume_snapshot_names_dict
 
             for self.volumes_delete, self.snapshots_to_be_deleted in self.volume_snapshot_mapping_dict.iteritems():
-                for self.snap_index in range(0, self.number_of_snapshot_per_volume):
+                for self.snap_index in range(0, self.number_of_snapshots_per_volume):
                     print "\n================DELETING SNAPSHOT WITH NAME %s FOR VOLUME %s ================\n" \
                           %(self.snapshots_to_be_deleted[self.snap_index]['name'], self.volumes_delete)
 
@@ -689,7 +748,7 @@ class SnapshotOperations(object):
                     self.op_snaps_vol_delete = subprocess.check_output(self.list_check_output_delete)
 
             for self.volumes_delete, self.snapshots_to_be_deleted in self.volume_snapshot_mapping_dict.iteritems():
-                for self.snap_index in range(0, self.number_of_snapshot_per_volume):
+                for self.snap_index in range(0, self.number_of_snapshots_per_volume):
                     self.delete_snapshot_operation = self.snapshots_check \
                         (self.snapshots_to_be_deleted[self.snap_index], self.volumes_delete, "delete")
 
