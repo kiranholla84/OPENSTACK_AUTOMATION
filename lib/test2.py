@@ -1,4 +1,8 @@
-dict_of_volname_snapshot = {'QE_10_903' : "LLL" , 'QE_10_901' : "qqq" , 'QE_10_900' : "rrr"}
-list_val = sorted(dict_of_volname_snapshot.keys())
-for volume_key in list_val:
-    print "\n%s" % volume_key
+input_volume_list = [1,2,3,4,5]
+input_snapshot_list = [['0_0','0_1'],['1_0','1_1'],['2_0','2_1']]
+
+for volume_index in range(len(input_volume_list)):
+    for snapshot_index in range(len(input_snapshot_list)):
+        print "\n volume index snapshot_index FINALVALUE %s %s %s" %(volume_index, snapshot_index , input_snapshot_list[volume_index][snapshot_index])
+
+        
